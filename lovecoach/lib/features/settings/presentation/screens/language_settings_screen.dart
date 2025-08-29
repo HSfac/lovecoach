@@ -39,8 +39,7 @@ class LanguageSettingsScreen extends ConsumerWidget {
                     children: [
                       _buildSystemLanguageSection(context, ref, localeState, l10n, isDark),
                       const SizedBox(height: 32),
-                      if (!localeState.useSystemLocale)
-                        _buildLanguageSelection(context, ref, localeState, l10n, isDark),
+                      _buildLanguageSelection(context, ref, localeState, l10n, isDark),
                       const SizedBox(height: 32),
                       _buildLanguageInfo(context, l10n!, isDark),
                     ],
@@ -239,6 +238,7 @@ class LanguageSettingsScreen extends ConsumerWidget {
                     supportedLocale: supportedLocale,
                     isSelected: isSelected,
                     isDark: isDark,
+                    useSystemLocale: localeState.useSystemLocale,
                   ),
                   if (!isLast)
                     Divider(height: 1, color: isDark ? Colors.grey[600] : Colors.grey[300]),
@@ -257,6 +257,7 @@ class LanguageSettingsScreen extends ConsumerWidget {
     required SupportedLocale supportedLocale,
     required bool isSelected,
     required bool isDark,
+    required bool useSystemLocale,
   }) {
     return ListTile(
       leading: Container(
@@ -277,16 +278,20 @@ class LanguageSettingsScreen extends ConsumerWidget {
         style: TextStyle(
           fontSize: 16,
           fontWeight: FontWeight.w600,
-          color: isSelected 
-              ? AppTheme.primaryColor
-              : (isDark ? Colors.white : AppTheme.textPrimary),
+          color: useSystemLocale
+              ? (isDark ? Colors.grey[600] : Colors.grey[400])
+              : (isSelected 
+                  ? AppTheme.primaryColor
+                  : (isDark ? Colors.white : AppTheme.textPrimary)),
         ),
       ),
       subtitle: Text(
         _getLanguageSubtitle(supportedLocale, AppLocalizations.of(context)),
         style: TextStyle(
           fontSize: 13,
-          color: isDark ? Colors.grey[400] : AppTheme.textSecondary,
+          color: useSystemLocale
+              ? (isDark ? Colors.grey[700] : Colors.grey[500])
+              : (isDark ? Colors.grey[400] : AppTheme.textSecondary),
         ),
       ),
       trailing: isSelected
@@ -295,9 +300,10 @@ class LanguageSettingsScreen extends ConsumerWidget {
               color: AppTheme.primaryColor,
             )
           : null,
-      onTap: () {
+      onTap: useSystemLocale ? null : () {
         ref.read(localeProvider.notifier).setLocale(supportedLocale);
       },
+      enabled: !useSystemLocale,
       contentPadding: const EdgeInsets.symmetric(horizontal: 20, vertical: 8),
     );
   }
@@ -360,22 +366,22 @@ class LanguageSettingsScreen extends ConsumerWidget {
             children: [
               _buildInfoItem(
                 icon: Icons.translate,
-                title: '실시간 번역',
-                description: '선택한 언어로 AI 상담사와 실시간 대화가 가능합니다',
+                title: l10n.realTimeTranslation,
+                description: l10n.realTimeTranslationDescription,
                 isDark: isDark,
               ),
               const SizedBox(height: 16),
               _buildInfoItem(
                 icon: Icons.psychology,
-                title: 'AI 모델 최적화',
-                description: '각 언어에 특화된 AI 모델이 더 자연스러운 상담을 제공합니다',
+                title: l10n.aiModelOptimization,
+                description: l10n.aiModelOptimizationDescription,
                 isDark: isDark,
               ),
               const SizedBox(height: 16),
               _buildInfoItem(
                 icon: Icons.update,
-                title: '즉시 적용',
-                description: '언어 변경 시 앱 전체에 즉시 적용되며 재시작이 필요없습니다',
+                title: l10n.instantApplication,
+                description: l10n.instantApplicationDescription,
                 isDark: isDark,
               ),
               const SizedBox(height: 20),

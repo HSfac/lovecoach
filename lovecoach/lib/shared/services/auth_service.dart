@@ -178,25 +178,35 @@ class AuthService {
   }
 
   Future<void> saveSurveyData(String userId, SurveyModel surveyData) async {
-    // 설문조사 완료 여부 검증
-    if (!surveyData.isComplete) {
-      throw Exception('설문조사가 완전히 작성되지 않았습니다. 모든 항목을 작성해주세요.');
+    try {
+      print('AuthService.saveSurveyData 시작: userId=$userId');
+      print('설문 데이터: ${surveyData.toFirestore()}');
+      
+      // 설문조사 완료 여부 검증
+      if (!surveyData.isComplete) {
+        print('설문조사 불완전: gender=${surveyData.gender}, ageRange=${surveyData.ageRange}, relationshipStatus=${surveyData.relationshipStatus}, interests=${surveyData.interests}, communicationStyle=${surveyData.communicationStyle}');
+        throw Exception('설문조사가 완전히 작성되지 않았습니다. 모든 항목을 작성해주세요.');
+      }
+      
+      final batch = _firestore.batch();
+      
+      // 설문조사 결과를 surveys 컬렉션에 저장
+      final surveyRef = _firestore.collection('surveys').doc(userId);
+      batch.set(surveyRef, surveyData.toFirestore(), SetOptions(merge: true));
+      
+      // 사용자 정보 업데이트 (설문조사 완료 상태)
+      final userRef = _firestore.collection('users').doc(userId);
+      batch.update(userRef, {
+        'hasCompletedSurvey': true,
+        'updatedAt': DateTime.now(),
+      });
+      
+      await batch.commit();
+      print('AuthService.saveSurveyData 완료');
+    } catch (e) {
+      print('AuthService.saveSurveyData 에러: $e');
+      rethrow;
     }
-    
-    final batch = _firestore.batch();
-    
-    // 설문조사 결과를 surveys 컬렉션에 저장
-    final surveyRef = _firestore.collection('surveys').doc(userId);
-    batch.set(surveyRef, surveyData.toFirestore());
-    
-    // 사용자 정보 업데이트 (설문조사 완료 상태)
-    final userRef = _firestore.collection('users').doc(userId);
-    batch.update(userRef, {
-      'hasCompletedSurvey': true,
-      'updatedAt': DateTime.now(),
-    });
-    
-    await batch.commit();
   }
 
   Future<SurveyModel?> getSurveyData(String userId) async {

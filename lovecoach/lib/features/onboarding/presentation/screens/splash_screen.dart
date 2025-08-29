@@ -4,6 +4,9 @@ import 'package:go_router/go_router.dart';
 import '../../../../core/theme/app_theme.dart';
 import '../../../../shared/providers/auth_provider.dart';
 
+// 전역 상태로 네비게이션 완료 여부 관리
+bool _globalHasNavigated = false;
+
 class SplashScreen extends ConsumerStatefulWidget {
   const SplashScreen({super.key});
 
@@ -18,6 +21,7 @@ class _SplashScreenState extends ConsumerState<SplashScreen>
   late Animation<double> _logoAnimation;
   late Animation<double> _textAnimation;
   late Animation<Offset> _slideAnimation;
+  bool _hasNavigated = false;
 
   @override
   void initState() {
@@ -63,18 +67,19 @@ class _SplashScreenState extends ConsumerState<SplashScreen>
   }
 
   void _startAnimation() async {
-    print('SplashScreen: 애니메이션 시작');
-    
     // 디버깅을 위해 애니메이션 건너뛰고 바로 네비게이션
     await Future.delayed(const Duration(milliseconds: 2000));
-    print('SplashScreen: 네비게이션 준비');
     _navigateToNextScreen();
   }
 
   void _navigateToNextScreen() {
-    if (!mounted) return;
+    print('DEBUG SPLASH: _navigateToNextScreen called, mounted=$mounted, _hasNavigated=$_hasNavigated, _globalHasNavigated=$_globalHasNavigated');
+    if (!mounted || _hasNavigated || _globalHasNavigated) return;
     
-    print('SplashScreen: 네비게이션 시작');
+    print('DEBUG SPLASH: Setting both flags = true');
+    _hasNavigated = true;
+    _globalHasNavigated = true;
+    
     final authState = ref.read(authStateProvider);
     final currentUser = ref.read(currentUserProvider);
     
@@ -86,37 +91,30 @@ class _SplashScreenState extends ConsumerState<SplashScreen>
             data: (userData) {
               if (!mounted) return;
               if (userData != null && userData.hasCompletedSurvey) {
-                print('SplashScreen: 로그인된 사용자, 설문 완료, 카테고리로 이동');
                 context.go('/category');
               } else {
-                print('SplashScreen: 로그인된 사용자, 설문 미완료, 설문으로 이동');
                 context.go('/survey');
               }
             },
             loading: () {
               if (!mounted) return;
-              print('SplashScreen: 사용자 정보 로딩 중, 설문으로 이동');
               context.go('/survey');
             },
             error: (error, stackTrace) {
               if (!mounted) return;
-              print('SplashScreen: 사용자 정보 에러: $error, 설문으로 이동');
               context.go('/survey');
             },
           );
         } else {
-          print('SplashScreen: 비로그인 사용자, 로그인으로 이동');
           context.go('/login');
         }
       },
       loading: () {
         if (!mounted) return;
-        print('SplashScreen: 로딩 상태, 로그인으로 이동');
         context.go('/login');
       },
       error: (error, stackTrace) {
         if (!mounted) return;
-        print('SplashScreen: 에러 발생: $error, 로그인으로 이동');
         context.go('/login');
       },
     );
@@ -131,7 +129,17 @@ class _SplashScreenState extends ConsumerState<SplashScreen>
 
   @override
   Widget build(BuildContext context) {
-    print('SplashScreen: build 메서드 호출됨');
+    print('DEBUG SPLASH: build called, _hasNavigated=$_hasNavigated, _globalHasNavigated=$_globalHasNavigated');
+    
+    // 이미 네비게이션이 완료된 경우 빈 컨테이너 반환
+    if (_globalHasNavigated) {
+      print('DEBUG SPLASH: Already navigated, returning empty container');
+      return const Scaffold(
+        backgroundColor: Colors.white,
+        body: Center(child: CircularProgressIndicator()),
+      );
+    }
+    
     return Scaffold(
       backgroundColor: Colors.white,
       body: Center(

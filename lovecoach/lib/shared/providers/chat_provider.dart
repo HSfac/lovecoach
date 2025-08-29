@@ -36,6 +36,7 @@ class ChatNotifier extends StateNotifier<AsyncValue<List<ChatMessage>>> {
   final ConsultationCategory category;
   final FirebaseFirestore _firestore = FirebaseFirestore.instance;
   bool _isAiTyping = false;
+  String? _currentSessionId;
 
   ChatNotifier(this.ref, this.category) : super(const AsyncValue.loading()) {
     _loadChatHistory();
@@ -54,19 +55,52 @@ class ChatNotifier extends StateNotifier<AsyncValue<List<ChatMessage>>> {
       final querySnapshot = await _firestore
           .collection('chats')
           .where('userId', isEqualTo: user.uid)
+          .where('category', isEqualTo: category.name)
           .orderBy('timestamp', descending: false)
           .limit(50)
           .get();
 
       final messages = querySnapshot.docs
           .map((doc) => ChatMessage.fromFirestore(doc.data(), doc.id))
-          .where((message) => message.category == category.name)
           .toList();
 
       state = AsyncValue.data(messages);
     } catch (e, stackTrace) {
       state = AsyncValue.error(e, stackTrace);
     }
+  }
+
+  Future<void> loadSession(String sessionId) async {
+    try {
+      final user = ref.read(authStateProvider).value;
+      if (user == null) {
+        state = const AsyncValue.data([]);
+        return;
+      }
+
+      _currentSessionId = sessionId;
+
+      final querySnapshot = await _firestore
+          .collection('chats')
+          .where('userId', isEqualTo: user.uid)
+          .where('sessionId', isEqualTo: sessionId)
+          .orderBy('timestamp', descending: false)
+          .get();
+
+      final messages = querySnapshot.docs
+          .map((doc) => ChatMessage.fromFirestore(doc.data(), doc.id))
+          .toList();
+
+      state = AsyncValue.data(messages);
+    } catch (e, stackTrace) {
+      state = AsyncValue.error(e, stackTrace);
+    }
+  }
+
+  String _generateSessionId() {
+    if (_currentSessionId != null) return _currentSessionId!;
+    _currentSessionId = '${DateTime.now().millisecondsSinceEpoch}_${category.name}';
+    return _currentSessionId!;
   }
 
   Future<void> sendMessage(String content) async {
@@ -98,6 +132,7 @@ class ChatNotifier extends StateNotifier<AsyncValue<List<ChatMessage>>> {
           timestamp: DateTime.now(),
           category: category,
           userId: 'ai',
+          sessionId: _generateSessionId(),
         );
 
         state = state.whenData((messages) => [...messages, filterMessage]);
@@ -113,6 +148,7 @@ class ChatNotifier extends StateNotifier<AsyncValue<List<ChatMessage>>> {
         timestamp: DateTime.now(),
         category: category,
         userId: user.uid,
+        sessionId: _generateSessionId(),
       );
 
       // 로컬 상태 업데이트
@@ -141,6 +177,7 @@ class ChatNotifier extends StateNotifier<AsyncValue<List<ChatMessage>>> {
           timestamp: DateTime.now(),
           category: category,
           userId: 'ai',
+          sessionId: _currentSessionId!,
         );
 
         state = state.whenData((messages) => [...messages, lengthWarningMessage]);
@@ -167,6 +204,7 @@ class ChatNotifier extends StateNotifier<AsyncValue<List<ChatMessage>>> {
         timestamp: DateTime.now(),
         category: category,
         userId: 'ai',
+        sessionId: _currentSessionId!,
       );
 
       // 로컬 상태에 AI 응답 추가
@@ -184,23 +222,27 @@ class ChatNotifier extends StateNotifier<AsyncValue<List<ChatMessage>>> {
         final now = DateTime.now();
         final authService = ref.read(authServiceProvider);
         
-        // 오늘이 새로운 날인지 확인 (날짜가 바뀌었다면 hasUsedTodaysConsultation 리셋)
+        // 오늘이 새로운 날인지 확인 (날짜가 바뀌었다면 dailyConsultationsUsed 리셋)
         final today = DateTime(now.year, now.month, now.day);
         final lastDate = currentUser.lastConsultationDate;
-        bool shouldResetDailyUsage = false;
+        int newDailyUsed = currentUser.dailyConsultationsUsed;
         
         if (lastDate == null) {
-          shouldResetDailyUsage = true;
+          newDailyUsed = 1; // 첫 사용
         } else {
           final lastDateOnly = DateTime(lastDate.year, lastDate.month, lastDate.day);
-          shouldResetDailyUsage = !lastDateOnly.isAtSameMomentAs(today);
+          if (lastDateOnly.isAtSameMomentAs(today)) {
+            newDailyUsed = currentUser.dailyConsultationsUsed + 1;
+          } else {
+            newDailyUsed = 1; // 새로운 날 첫 사용
+          }
         }
         
         await authService.updateUser(
           currentUser.copyWith(
             freeConsultationsUsed: currentUser.freeConsultationsUsed + 1,
             lastConsultationDate: now,
-            hasUsedTodaysConsultation: true,
+            dailyConsultationsUsed: newDailyUsed,
           ),
         );
       }
@@ -218,6 +260,7 @@ class ChatNotifier extends StateNotifier<AsyncValue<List<ChatMessage>>> {
         timestamp: DateTime.now(),
         category: category,
         userId: 'ai',
+        sessionId: _currentSessionId ?? _generateSessionId(),
       );
 
       state = state.whenData((messages) => [...messages, errorMessage]);
@@ -244,6 +287,7 @@ class ChatNotifier extends StateNotifier<AsyncValue<List<ChatMessage>>> {
 
       // 로컬 상태 초기화
       state = const AsyncValue.data([]);
+      _currentSessionId = null;
     } catch (e, stackTrace) {
       state = AsyncValue.error(e, stackTrace);
     }

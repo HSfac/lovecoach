@@ -6,7 +6,9 @@ import 'package:flutter_localizations/flutter_localizations.dart';
 import 'package:intl/intl.dart' as intl;
 
 import 'app_localizations_en.dart';
+import 'app_localizations_ja.dart';
 import 'app_localizations_ko.dart';
+import 'app_localizations_zh.dart';
 
 // ignore_for_file: type=lint
 
@@ -95,7 +97,9 @@ abstract class AppLocalizations {
   /// A list of this localizations delegate's supported locales.
   static const List<Locale> supportedLocales = <Locale>[
     Locale('en'),
+    Locale('ja'),
     Locale('ko'),
+    Locale('zh'),
   ];
 
   /// No description provided for @languageSettings.
@@ -253,6 +257,60 @@ abstract class AppLocalizations {
   /// In ko, this message translates to:
   /// **'설정'**
   String get settings;
+
+  /// No description provided for @welcomeMessage.
+  ///
+  /// In ko, this message translates to:
+  /// **'안녕하세요, {userName}님!'**
+  String welcomeMessage(String userName);
+
+  /// No description provided for @defaultUserName.
+  ///
+  /// In ko, this message translates to:
+  /// **'사용자'**
+  String get defaultUserName;
+
+  /// No description provided for @chatGreeting.
+  ///
+  /// In ko, this message translates to:
+  /// **'안녕하세요! 👋'**
+  String get chatGreeting;
+
+  /// No description provided for @crushChatWelcome.
+  ///
+  /// In ko, this message translates to:
+  /// **'안녕하세요! 썸 관련 고민을 들어드릴 러브코치입니다. 💕 어떤 상황인지 자세히 말씀해 주세요.'**
+  String get crushChatWelcome;
+
+  /// No description provided for @relationshipChatWelcome.
+  ///
+  /// In ko, this message translates to:
+  /// **'안녕하세요! 연애 중인 분들의 고민을 상담해드리는 러브코치입니다. ❤️ 어떤 일이 있으셨나요?'**
+  String get relationshipChatWelcome;
+
+  /// No description provided for @breakupChatWelcome.
+  ///
+  /// In ko, this message translates to:
+  /// **'안녕하세요! 이별 후의 마음을 치료해드리는 러브코치입니다. 💙 힘든 시간을 겪고 계시는군요. 천천히 이야기해 주세요.'**
+  String get breakupChatWelcome;
+
+  /// No description provided for @reunionChatWelcome.
+  ///
+  /// In ko, this message translates to:
+  /// **'안녕하세요! 재회에 관한 상담을 도와드리는 러브코치입니다. 💚 복잡한 마음일 텐데, 상황을 자세히 들려주세요.'**
+  String get reunionChatWelcome;
+
+  /// No description provided for @themePreviewMessage1.
+  ///
+  /// In ko, this message translates to:
+  /// **'안녕하세요! 오늘 기분이 어떠신가요?'**
+  String get themePreviewMessage1;
+
+  /// No description provided for @themePreviewMessage2.
+  ///
+  /// In ko, this message translates to:
+  /// **'안녕하세요! 저는 당신의 연애 상담사입니다. 오늘 하루 어떻게 보내셨는지 궁금해요.'**
+  String get themePreviewMessage2;
 }
 
 class _AppLocalizationsDelegate
@@ -266,7 +324,7 @@ class _AppLocalizationsDelegate
 
   @override
   bool isSupported(Locale locale) =>
-      <String>['en', 'ko'].contains(locale.languageCode);
+      <String>['en', 'ja', 'ko', 'zh'].contains(locale.languageCode);
 
   @override
   bool shouldReload(_AppLocalizationsDelegate old) => false;
@@ -277,8 +335,12 @@ AppLocalizations lookupAppLocalizations(Locale locale) {
   switch (locale.languageCode) {
     case 'en':
       return AppLocalizationsEn();
+    case 'ja':
+      return AppLocalizationsJa();
     case 'ko':
       return AppLocalizationsKo();
+    case 'zh':
+      return AppLocalizationsZh();
   }
 
   throw FlutterError(

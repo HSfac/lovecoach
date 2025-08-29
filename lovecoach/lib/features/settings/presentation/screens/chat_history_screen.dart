@@ -14,10 +14,27 @@ class ChatHistoryScreen extends ConsumerStatefulWidget {
   ConsumerState<ChatHistoryScreen> createState() => _ChatHistoryScreenState();
 }
 
+class ChatSession {
+  final String sessionId;
+  final List<ChatMessage> messages;
+  final DateTime lastMessageTime;
+  final ConsultationCategory category;
+  final String firstUserMessage;
+
+  ChatSession({
+    required this.sessionId,
+    required this.messages,
+    required this.lastMessageTime,
+    required this.category,
+    required this.firstUserMessage,
+  });
+}
+
 class _ChatHistoryScreenState extends ConsumerState<ChatHistoryScreen> {
   final FirebaseFirestore _firestore = FirebaseFirestore.instance;
   List<ChatMessage> _allMessages = [];
-  List<ChatMessage> _filteredMessages = [];
+  List<ChatSession> _allSessions = [];
+  List<ChatSession> _filteredSessions = [];
   bool _isLoading = true;
   String _selectedCategory = 'all';
   String _searchQuery = '';
@@ -52,7 +69,8 @@ class _ChatHistoryScreenState extends ConsumerState<ChatHistoryScreen> {
 
       setState(() {
         _allMessages = messages;
-        _filteredMessages = messages;
+        _allSessions = _groupMessagesBySession(messages);
+        _filteredSessions = _allSessions;
         _isLoading = false;
       });
     } catch (e) {
@@ -70,13 +88,41 @@ class _ChatHistoryScreenState extends ConsumerState<ChatHistoryScreen> {
     }
   }
 
+  List<ChatSession> _groupMessagesBySession(List<ChatMessage> messages) {
+    final Map<String, List<ChatMessage>> sessionGroups = {};
+    
+    for (final message in messages) {
+      final sessionId = message.sessionId.isEmpty ? 'default_${message.category.name}' : message.sessionId;
+      sessionGroups.putIfAbsent(sessionId, () => []).add(message);
+    }
+
+    return sessionGroups.entries.map((entry) {
+      final sessionMessages = entry.value;
+      sessionMessages.sort((a, b) => a.timestamp.compareTo(b.timestamp));
+      
+      final firstUserMessage = sessionMessages
+          .where((m) => m.type == MessageType.user)
+          .first;
+
+      return ChatSession(
+        sessionId: entry.key,
+        messages: sessionMessages,
+        lastMessageTime: sessionMessages.last.timestamp,
+        category: firstUserMessage.category,
+        firstUserMessage: firstUserMessage.content,
+      );
+    }).toList()
+      ..sort((a, b) => b.lastMessageTime.compareTo(a.lastMessageTime));
+  }
+
   void _filterMessages() {
     setState(() {
-      _filteredMessages = _allMessages.where((message) {
+      _filteredSessions = _allSessions.where((session) {
         bool matchesCategory = _selectedCategory == 'all' || 
-                              message.category.name == _selectedCategory;
+                              session.category.name == _selectedCategory;
         bool matchesSearch = _searchQuery.isEmpty ||
-                            message.content.toLowerCase().contains(_searchQuery.toLowerCase());
+                            session.firstUserMessage.toLowerCase().contains(_searchQuery.toLowerCase()) ||
+                            session.messages.any((msg) => msg.content.toLowerCase().contains(_searchQuery.toLowerCase()));
         return matchesCategory && matchesSearch;
       }).toList();
     });
@@ -88,8 +134,10 @@ class _ChatHistoryScreenState extends ConsumerState<ChatHistoryScreen> {
       
       setState(() {
         _allMessages.removeWhere((message) => message.id == messageId);
-        _filteredMessages.removeWhere((message) => message.id == messageId);
+        _allSessions = _groupMessagesBySession(_allMessages);
+        _filteredSessions = _allSessions;
       });
+      _filterMessages();
 
       ScaffoldMessenger.of(context).showSnackBar(
         const SnackBar(
@@ -125,7 +173,8 @@ class _ChatHistoryScreenState extends ConsumerState<ChatHistoryScreen> {
 
       setState(() {
         _allMessages.clear();
-        _filteredMessages.clear();
+        _allSessions.clear();
+        _filteredSessions.clear();
       });
 
       ScaffoldMessenger.of(context).showSnackBar(
@@ -333,9 +382,9 @@ class _ChatHistoryScreenState extends ConsumerState<ChatHistoryScreen> {
   }
 
   Widget _buildStats() {
+    final totalSessions = _allSessions.length;
     final totalMessages = _allMessages.length;
     final userMessages = _allMessages.where((m) => m.type == MessageType.user).length;
-    final aiMessages = _allMessages.where((m) => m.type == MessageType.ai).length;
 
     return Container(
       margin: const EdgeInsets.all(24),
@@ -354,9 +403,9 @@ class _ChatHistoryScreenState extends ConsumerState<ChatHistoryScreen> {
       child: Row(
         mainAxisAlignment: MainAxisAlignment.spaceAround,
         children: [
+          _buildStatItem('채팅 세션', totalSessions.toString(), Icons.chat_outlined),
           _buildStatItem('전체 메시지', totalMessages.toString(), Icons.chat_bubble_outline),
           _buildStatItem('내 메시지', userMessages.toString(), Icons.person_outline),
-          _buildStatItem('AI 응답', aiMessages.toString(), Icons.psychology_outlined),
         ],
       ),
     );
@@ -387,7 +436,7 @@ class _ChatHistoryScreenState extends ConsumerState<ChatHistoryScreen> {
   }
 
   Widget _buildMessagesList() {
-    if (_filteredMessages.isEmpty) {
+    if (_filteredSessions.isEmpty) {
       return const Center(
         child: Column(
           mainAxisAlignment: MainAxisAlignment.center,
@@ -412,94 +461,119 @@ class _ChatHistoryScreenState extends ConsumerState<ChatHistoryScreen> {
 
     return ListView.builder(
       padding: const EdgeInsets.symmetric(horizontal: 24),
-      itemCount: _filteredMessages.length,
+      itemCount: _filteredSessions.length,
       itemBuilder: (context, index) {
-        final message = _filteredMessages[index];
-        return _buildMessageTile(message);
+        final session = _filteredSessions[index];
+        return _buildSessionTile(session);
       },
     );
   }
 
-  Widget _buildMessageTile(ChatMessage message) {
-    final isUser = message.type == MessageType.user;
-    
-    return Container(
-      margin: const EdgeInsets.only(bottom: 12),
-      padding: const EdgeInsets.all(16),
-      decoration: BoxDecoration(
-        color: Colors.white,
-        borderRadius: BorderRadius.circular(12),
-        boxShadow: [
-          BoxShadow(
-            color: Colors.black.withOpacity(0.05),
-            blurRadius: 4,
-            offset: const Offset(0, 2),
-          ),
-        ],
-      ),
-      child: Column(
-        crossAxisAlignment: CrossAxisAlignment.start,
-        children: [
-          Row(
-            children: [
-              CircleAvatar(
-                radius: 12,
-                backgroundColor: isUser ? AppTheme.primaryColor : AppTheme.accentColor,
-                child: Icon(
-                  isUser ? Icons.person : Icons.psychology,
+  Widget _buildSessionTile(ChatSession session) {
+    return GestureDetector(
+      onTap: () => _openChatSession(session),
+      child: Container(
+        margin: const EdgeInsets.only(bottom: 12),
+        padding: const EdgeInsets.all(16),
+        decoration: BoxDecoration(
+          color: Colors.white,
+          borderRadius: BorderRadius.circular(12),
+          boxShadow: [
+            BoxShadow(
+              color: Colors.black.withOpacity(0.05),
+              blurRadius: 4,
+              offset: const Offset(0, 2),
+            ),
+          ],
+        ),
+        child: Column(
+          crossAxisAlignment: CrossAxisAlignment.start,
+          children: [
+            Row(
+              children: [
+                Container(
+                  padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 4),
+                  decoration: BoxDecoration(
+                    color: _getCategoryColor(session.category).withOpacity(0.1),
+                    borderRadius: BorderRadius.circular(8),
+                  ),
+                  child: Text(
+                    _getCategoryLabel(session.category),
+                    style: TextStyle(
+                      fontSize: 12,
+                      color: _getCategoryColor(session.category),
+                      fontWeight: FontWeight.bold,
+                    ),
+                  ),
+                ),
+                const Spacer(),
+                Text(
+                  _formatTimestamp(session.lastMessageTime),
+                  style: const TextStyle(
+                    fontSize: 12,
+                    color: AppTheme.textHint,
+                  ),
+                ),
+                PopupMenuButton<String>(
+                  icon: const Icon(Icons.more_vert, size: 16, color: AppTheme.textHint),
+                  onSelected: (value) {
+                    if (value == 'delete') {
+                      _showDeleteSessionDialog(session.sessionId);
+                    }
+                  },
+                  itemBuilder: (context) => [
+                    const PopupMenuItem(
+                      value: 'delete',
+                      child: Row(
+                        children: [
+                          Icon(Icons.delete_outline, size: 16, color: Colors.red),
+                          SizedBox(width: 8),
+                          Text('세션 삭제', style: TextStyle(color: Colors.red)),
+                        ],
+                      ),
+                    ),
+                  ],
+                ),
+              ],
+            ),
+            const SizedBox(height: 12),
+            Text(
+              session.firstUserMessage.length > 100 
+                  ? '${session.firstUserMessage.substring(0, 100)}...'
+                  : session.firstUserMessage,
+              style: const TextStyle(
+                color: AppTheme.textPrimary,
+                fontSize: 14,
+                fontWeight: FontWeight.w500,
+                height: 1.4,
+              ),
+            ),
+            const SizedBox(height: 8),
+            Row(
+              children: [
+                Icon(
+                  Icons.chat_bubble_outline,
                   size: 14,
-                  color: Colors.white,
-                ),
-              ),
-              const SizedBox(width: 8),
-              Text(
-                isUser ? '나' : 'AI 상담사',
-                style: const TextStyle(
-                  fontWeight: FontWeight.bold,
-                  color: AppTheme.textPrimary,
-                ),
-              ),
-              const Spacer(),
-              Text(
-                _formatTimestamp(message.timestamp),
-                style: const TextStyle(
-                  fontSize: 12,
                   color: AppTheme.textHint,
                 ),
-              ),
-              IconButton(
-                icon: const Icon(Icons.delete_outline, size: 16, color: Colors.red),
-                onPressed: () => _showDeleteDialog(message.id),
-                padding: EdgeInsets.zero,
-                constraints: const BoxConstraints(),
-              ),
-            ],
-          ),
-          const SizedBox(height: 8),
-          Text(
-            message.content,
-            style: const TextStyle(
-              color: AppTheme.textSecondary,
-              height: 1.4,
+                const SizedBox(width: 4),
+                Text(
+                  '${session.messages.length}개 메시지',
+                  style: const TextStyle(
+                    fontSize: 12,
+                    color: AppTheme.textHint,
+                  ),
+                ),
+                const Spacer(),
+                const Icon(
+                  Icons.arrow_forward_ios,
+                  size: 14,
+                  color: AppTheme.textHint,
+                ),
+              ],
             ),
-          ),
-          const SizedBox(height: 8),
-          Container(
-            padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 4),
-            decoration: BoxDecoration(
-              color: _getCategoryColor(message.category).withOpacity(0.1),
-              borderRadius: BorderRadius.circular(8),
-            ),
-            child: Text(
-              _getCategoryLabel(message.category),
-              style: TextStyle(
-                fontSize: 12,
-                color: _getCategoryColor(message.category),
-                fontWeight: FontWeight.bold,
-              ),
-            ),
-          ),
-        ],
+          ],
+        ),
       ),
     );
   }
@@ -545,6 +619,50 @@ class _ChatHistoryScreenState extends ConsumerState<ChatHistoryScreen> {
     }
   }
 
+  void _openChatSession(ChatSession session) {
+    context.push('/chat?category=${session.category.name}&sessionId=${session.sessionId}');
+  }
+
+  Future<void> _deleteSession(String sessionId) async {
+    try {
+      final user = ref.read(authStateProvider).value;
+      if (user == null) return;
+
+      final querySnapshot = await _firestore
+          .collection('chats')
+          .where('userId', isEqualTo: user.uid)
+          .where('sessionId', isEqualTo: sessionId)
+          .get();
+
+      final batch = _firestore.batch();
+      for (final doc in querySnapshot.docs) {
+        batch.delete(doc.reference);
+      }
+      await batch.commit();
+
+      setState(() {
+        _allMessages.removeWhere((message) => message.sessionId == sessionId);
+        _allSessions = _groupMessagesBySession(_allMessages);
+        _filteredSessions = _allSessions;
+      });
+      _filterMessages();
+
+      ScaffoldMessenger.of(context).showSnackBar(
+        const SnackBar(
+          content: Text('채팅 세션이 삭제되었습니다'),
+          backgroundColor: AppTheme.calmColor,
+        ),
+      );
+    } catch (e) {
+      ScaffoldMessenger.of(context).showSnackBar(
+        SnackBar(
+          content: Text('세션 삭제 중 오류가 발생했습니다: $e'),
+          backgroundColor: Colors.red,
+        ),
+      );
+    }
+  }
+
   void _showDeleteDialog(String messageId) {
     showDialog(
       context: context,
@@ -587,6 +705,30 @@ class _ChatHistoryScreenState extends ConsumerState<ChatHistoryScreen> {
             },
             style: ElevatedButton.styleFrom(backgroundColor: Colors.red),
             child: const Text('모든 기록 삭제', style: TextStyle(color: Colors.white)),
+          ),
+        ],
+      ),
+    );
+  }
+
+  void _showDeleteSessionDialog(String sessionId) {
+    showDialog(
+      context: context,
+      builder: (context) => AlertDialog(
+        title: const Text('세션 삭제'),
+        content: const Text('이 채팅 세션의 모든 메시지를 삭제하시겠습니까?'),
+        actions: [
+          TextButton(
+            onPressed: () => Navigator.pop(context),
+            child: const Text('취소'),
+          ),
+          ElevatedButton(
+            onPressed: () {
+              Navigator.pop(context);
+              _deleteSession(sessionId);
+            },
+            style: ElevatedButton.styleFrom(backgroundColor: Colors.red),
+            child: const Text('삭제', style: TextStyle(color: Colors.white)),
           ),
         ],
       ),

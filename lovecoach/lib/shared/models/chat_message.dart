@@ -20,6 +20,7 @@ class ChatMessage {
   final DateTime timestamp;
   final ConsultationCategory category;
   final String userId;
+  final String sessionId;
 
   const ChatMessage({
     required this.id,
@@ -28,6 +29,7 @@ class ChatMessage {
     required this.timestamp,
     required this.category,
     required this.userId,
+    required this.sessionId,
   });
 
   factory ChatMessage.fromFirestore(Map<String, dynamic> data, String id) {
@@ -44,6 +46,7 @@ class ChatMessage {
         orElse: () => ConsultationCategory.flirting,
       ),
       userId: data['userId'] ?? '',
+      sessionId: data['sessionId'] ?? '',
     );
   }
 
@@ -54,6 +57,7 @@ class ChatMessage {
       'timestamp': timestamp,
       'category': category.name,
       'userId': userId,
+      'sessionId': sessionId,
     };
   }
 
@@ -64,6 +68,7 @@ class ChatMessage {
     DateTime? timestamp,
     ConsultationCategory? category,
     String? userId,
+    String? sessionId,
   }) {
     return ChatMessage(
       id: id ?? this.id,
@@ -72,6 +77,7 @@ class ChatMessage {
       timestamp: timestamp ?? this.timestamp,
       category: category ?? this.category,
       userId: userId ?? this.userId,
+      sessionId: sessionId ?? this.sessionId,
     );
   }
 }

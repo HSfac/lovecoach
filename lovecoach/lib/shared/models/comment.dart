@@ -11,6 +11,8 @@ class Comment {
   final int likeCount;
   final List<String> likedBy;
   final UserModel? author; // Optional user info
+  final String? parentId; // For replies
+  final List<Comment> replies; // Nested replies
 
   Comment({
     required this.id,
@@ -22,6 +24,8 @@ class Comment {
     this.likeCount = 0,
     this.likedBy = const [],
     this.author,
+    this.parentId,
+    this.replies = const [],
   });
 
   factory Comment.fromFirestore(DocumentSnapshot doc) {
@@ -35,6 +39,7 @@ class Comment {
       createdAt: (data['createdAt'] as Timestamp).toDate(),
       likeCount: data['likeCount'] ?? 0,
       likedBy: List<String>.from(data['likedBy'] ?? []),
+      parentId: data['parentId'],
     );
   }
 
@@ -47,6 +52,7 @@ class Comment {
       'createdAt': Timestamp.fromDate(createdAt),
       'likeCount': likeCount,
       'likedBy': likedBy,
+      if (parentId != null) 'parentId': parentId,
     };
   }
 
@@ -60,6 +66,8 @@ class Comment {
     int? likeCount,
     List<String>? likedBy,
     UserModel? author,
+    String? parentId,
+    List<Comment>? replies,
   }) {
     return Comment(
       id: id ?? this.id,
@@ -71,6 +79,8 @@ class Comment {
       likeCount: likeCount ?? this.likeCount,
       likedBy: likedBy ?? this.likedBy,
       author: author ?? this.author,
+      parentId: parentId ?? this.parentId,
+      replies: replies ?? this.replies,
     );
   }
 }

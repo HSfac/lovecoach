@@ -30,5 +30,24 @@
   "chat": "Chat",
   "community": "Community",
   "profile": "Profile",
-  "settings": "Settings"
+  "settings": "Settings",
+  
+  "welcomeMessage": "Hello, {userName}!",
+  "@welcomeMessage": {
+    "placeholders": {
+      "userName": {
+        "type": "String"
+      }
+    }
+  },
+  "defaultUserName": "User",
+  
+  "chatGreeting": "Hello! 👋",
+  "crushChatWelcome": "Hello! I'm Love Coach here to help with your crush concerns. 💕 Please tell me about your situation in detail.",
+  "relationshipChatWelcome": "Hello! I'm Love Coach for those in relationships. ❤️ What's going on?",
+  "breakupChatWelcome": "Hello! I'm Love Coach here to heal hearts after breakups. 💙 You're going through a tough time. Please share your story.",
+  "reunionChatWelcome": "Hello! I'm Love Coach specializing in reconciliation. 💚 Your feelings must be complex. Please tell me about your situation.",
+  
+  "themePreviewMessage1": "Hello! How are you feeling today?",
+  "themePreviewMessage2": "Hello! I'm your relationship counselor. I'm curious about how your day went."
 }

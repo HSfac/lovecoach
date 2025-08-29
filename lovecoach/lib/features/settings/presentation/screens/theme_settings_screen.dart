@@ -3,6 +3,7 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
 import '../../../../core/theme/app_theme.dart';
 import '../../../../shared/providers/theme_provider.dart';
+import '../../../../generated/app_localizations.dart';
 
 class ThemeSettingsScreen extends ConsumerWidget {
   const ThemeSettingsScreen({super.key});
@@ -351,7 +352,7 @@ class ThemeSettingsScreen extends ConsumerWidget {
                   borderRadius: BorderRadius.circular(12),
                 ),
                 child: Text(
-                  '안녕하세요! 오늘 기분이 어떠신가요?',
+                  AppLocalizations.of(context)!.themePreviewMessage1,
                   style: TextStyle(
                     fontSize: 14 * fontSize,
                     color: AppTheme.textPrimary,
@@ -366,7 +367,7 @@ class ThemeSettingsScreen extends ConsumerWidget {
                   borderRadius: BorderRadius.circular(12),
                 ),
                 child: Text(
-                  '안녕하세요! 저는 당신의 연애 상담사입니다. 오늘 하루 어떻게 보내셨는지 궁금해요.',
+                  AppLocalizations.of(context)!.themePreviewMessage2,
                   style: TextStyle(
                     fontSize: 14 * fontSize,
                     color: AppTheme.textPrimary,

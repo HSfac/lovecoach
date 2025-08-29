@@ -8,6 +8,7 @@ import 'core/theme/app_theme.dart';
 import 'core/config/env_config.dart';
 import 'shared/services/notification_service.dart';
 import 'shared/services/daily_reset_service.dart';
+import 'shared/services/user_migration_service.dart';
 import 'shared/providers/theme_provider.dart';
 import 'shared/providers/locale_provider.dart';
 import 'generated/app_localizations.dart';
@@ -44,6 +45,13 @@ void main() async {
     
     // 일일 리셋 서비스 시작
     DailyResetService().startDailyResetTimer();
+    
+    // 사용자 데이터 마이그레이션 실행 (한 번만)
+    try {
+      await UserMigrationService.migrateUserLimits();
+    } catch (e) {
+      print('사용자 데이터 마이그레이션 실패: $e');
+    }
     
     print('Firebase 초기화 성공');
   } catch (e) {

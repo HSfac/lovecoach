@@ -87,6 +87,7 @@ class CommunityNotifier extends StateNotifier<AsyncValue<void>> {
     required String authorId,
     required String authorName,
     required String content,
+    String? parentId, // For replies
   }) async {
     try {
       await _communityService.addComment(
@@ -94,9 +95,11 @@ class CommunityNotifier extends StateNotifier<AsyncValue<void>> {
         authorId: authorId,
         authorName: authorName,
         content: content,
+        parentId: parentId,
       );
     } catch (error, stackTrace) {
       state = AsyncValue.error(error, stackTrace);
+      rethrow;
     }
   }
 

@@ -1,0 +1,53 @@
+{
+  "@@locale": "ja",
+  
+  "languageSettings": "言語設定",
+  "languageSettingsMode": "言語設定モード",
+  "useSystemLanguage": "システム言語を使用",
+  "useSystemLanguageDescription": "デバイスの言語設定に従います",
+  "currentLanguage": "現在の言語",
+  "languageSelection": "言語選択",
+  "languageSettingsInfo": "言語設定情報",
+  
+  "korean": "한국어",
+  "english": "English",
+  "japanese": "日本語",
+  "chinese": "中文",
+  
+  "englishSubtitle": "English (US)",
+  "japaneseSubtitle": "日本語 (Japanese)",
+  "chineseSubtitle": "中文简体 (Simplified Chinese)",
+  
+  "realTimeTranslation": "リアルタイム翻訳",
+  "realTimeTranslationDescription": "選択した言語でAIカウンセラーとリアルタイムで会話できます",
+  "aiModelOptimization": "AIモデル最適化",
+  "aiModelOptimizationDescription": "各言語に特化したAIモデルが、より自然なカウンセリングを提供します",
+  "instantApplication": "即座に適用",
+  "instantApplicationDescription": "言語変更時にアプリ全体に即座に適用され、再起動は不要です",
+  "chatHistoryPreservation": "言語変更後も以前のチャット履歴は保持されます",
+  
+  "home": "ホーム",
+  "chat": "チャット",
+  "community": "コミュニティ",
+  "profile": "プロフィール",
+  "settings": "設定",
+  
+  "welcomeMessage": "こんにちは、{userName}さん！",
+  "@welcomeMessage": {
+    "placeholders": {
+      "userName": {
+        "type": "String"
+      }
+    }
+  },
+  "defaultUserName": "ユーザー",
+  
+  "chatGreeting": "こんにちは！ 👋",
+  "crushChatWelcome": "こんにちは！片思いのお悩みをお聞きするラブコーチです。💕 どのような状況か詳しくお聞かせください。",
+  "relationshipChatWelcome": "こんにちは！恋愛中の方のお悩みを相談に乗るラブコーチです。❤️ どのようなことがありましたか？",
+  "breakupChatWelcome": "こんにちは！別れた後の心を癒すラブコーチです。💙 辛い時間を過ごしていらっしゃいますね。ゆっくりとお話しください。",
+  "reunionChatWelcome": "こんにちは！復縁に関する相談をサポートするラブコーチです。💚 複雑な気持ちでしょうが、状況を詳しくお聞かせください。",
+  
+  "themePreviewMessage1": "こんにちは！今日の気分はいかがですか？",
+  "themePreviewMessage2": "こんにちは！あなたの恋愛カウンセラーです。今日一日はどのように過ごされましたか？"
+}

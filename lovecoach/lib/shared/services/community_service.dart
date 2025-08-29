@@ -141,27 +141,43 @@ class CommunityService {
         .where('postId', isEqualTo: postId)
         .orderBy('createdAt', descending: false)
         .snapshots()
-        .asyncMap((snapshot) async {
-      List<Comment> comments = [];
+        .map((snapshot) {
+      List<Comment> allComments = [];
       
+      // Simply convert all comments without complex processing for now
       for (final doc in snapshot.docs) {
-        final comment = Comment.fromFirestore(doc);
-        
-        // Fetch author info
-        UserModel? author;
         try {
-          final userDoc = await _firestore.collection('users').doc(comment.authorId).get();
-          if (userDoc.exists) {
-            author = UserModel.fromFirestore(userDoc.data()!, userDoc.id);
-          }
+          final comment = Comment.fromFirestore(doc);
+          allComments.add(comment);
         } catch (e) {
-          // Handle error silently, comment will show without author info
+          // Handle parsing errors silently
         }
-        
-        comments.add(comment.copyWith(author: author));
       }
       
-      return comments;
+      // Separate top-level comments and replies
+      List<Comment> topLevelComments = [];
+      Map<String, List<Comment>> repliesMap = {};
+      
+      for (final comment in allComments) {
+        if (comment.parentId == null) {
+          topLevelComments.add(comment);
+        } else {
+          if (!repliesMap.containsKey(comment.parentId)) {
+            repliesMap[comment.parentId!] = [];
+          }
+          repliesMap[comment.parentId!]!.add(comment);
+        }
+      }
+      
+      // Attach replies to parent comments
+      for (int i = 0; i < topLevelComments.length; i++) {
+        final parentId = topLevelComments[i].id;
+        if (repliesMap.containsKey(parentId)) {
+          topLevelComments[i] = topLevelComments[i].copyWith(replies: repliesMap[parentId]!);
+        }
+      }
+      
+      return topLevelComments;
     });
   }
 
@@ -170,6 +186,7 @@ class CommunityService {
     required String authorId,
     required String authorName,
     required String content,
+    String? parentId, // For replies
   }) async {
     final comment = Comment(
       id: '',
@@ -178,6 +195,7 @@ class CommunityService {
       authorName: authorName,
       content: content,
       createdAt: DateTime.now(),
+      parentId: parentId,
     );
 
     final docRef = await _firestore.collection('comments').add(comment.toFirestore());

@@ -90,4 +90,38 @@ class AppLocalizationsEn extends AppLocalizations {
 
   @override
   String get settings => 'Settings';
+
+  @override
+  String welcomeMessage(String userName) {
+    return 'Hello, $userName!';
+  }
+
+  @override
+  String get defaultUserName => 'User';
+
+  @override
+  String get chatGreeting => 'Hello! 👋';
+
+  @override
+  String get crushChatWelcome =>
+      'Hello! I\'m Love Coach here to help with your crush concerns. 💕 Please tell me about your situation in detail.';
+
+  @override
+  String get relationshipChatWelcome =>
+      'Hello! I\'m Love Coach for those in relationships. ❤️ What\'s going on?';
+
+  @override
+  String get breakupChatWelcome =>
+      'Hello! I\'m Love Coach here to heal hearts after breakups. 💙 You\'re going through a tough time. Please share your story.';
+
+  @override
+  String get reunionChatWelcome =>
+      'Hello! I\'m Love Coach specializing in reconciliation. 💚 Your feelings must be complex. Please tell me about your situation.';
+
+  @override
+  String get themePreviewMessage1 => 'Hello! How are you feeling today?';
+
+  @override
+  String get themePreviewMessage2 =>
+      'Hello! I\'m your relationship counselor. I\'m curious about how your day went.';
 }

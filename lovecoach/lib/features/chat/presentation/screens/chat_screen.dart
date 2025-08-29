@@ -8,11 +8,13 @@ import '../../../../shared/widgets/counselor_profile.dart';
 import '../../../../shared/widgets/enhanced_message_bubble.dart';
 import '../../../../shared/widgets/typing_indicator.dart';
 import '../../../../core/theme/app_theme.dart';
+import '../../../../generated/app_localizations.dart';
 
 class ChatScreen extends ConsumerStatefulWidget {
   final String category;
+  final String? sessionId;
 
-  const ChatScreen({super.key, required this.category});
+  const ChatScreen({super.key, required this.category, this.sessionId});
 
   @override
   ConsumerState<ChatScreen> createState() => _ChatScreenState();
@@ -31,18 +33,26 @@ class _ChatScreenState extends ConsumerState<ChatScreen> {
       (e) => e.name == widget.category,
       orElse: () => ConsultationCategory.flirting,
     );
+    
+    // 세션 ID가 있는 경우 해당 세션을 로드
+    if (widget.sessionId != null) {
+      WidgetsBinding.instance.addPostFrameCallback((_) {
+        ref.read(chatNotifierProvider(_category).notifier).loadSession(widget.sessionId!);
+      });
+    }
   }
 
   String _getWelcomeMessage(ConsultationCategory category) {
+    final l10n = AppLocalizations.of(context)!;
     switch (category) {
       case ConsultationCategory.flirting:
-        return '안녕하세요! 썸 관련 고민을 들어드릴 러브코치입니다. 💕 어떤 상황인지 자세히 말씀해 주세요.';
+        return l10n.crushChatWelcome;
       case ConsultationCategory.dating:
-        return '안녕하세요! 연애 중인 분들의 고민을 상담해드리는 러브코치입니다. ❤️ 어떤 일이 있으셨나요?';
+        return l10n.relationshipChatWelcome;
       case ConsultationCategory.breakup:
-        return '안녕하세요! 이별 후의 마음을 치료해드리는 러브코치입니다. 💙 힘든 시간을 겪고 계시는군요. 천천히 이야기해 주세요.';
+        return l10n.breakupChatWelcome;
       case ConsultationCategory.reconciliation:
-        return '안녕하세요! 재회에 관한 상담을 도와드리는 러브코치입니다. 💚 복잡한 마음일 텐데, 상황을 자세히 들려주세요.';
+        return l10n.reunionChatWelcome;
     }
   }
 
@@ -123,6 +133,7 @@ class _ChatScreenState extends ConsumerState<ChatScreen> {
       timestamp: DateTime.now(),
       category: _category,
       userId: 'ai',
+      sessionId: '',
     );
     
     ref.read(chatNotifierProvider(_category).notifier).state = 
@@ -290,7 +301,7 @@ class _ChatScreenState extends ConsumerState<ChatScreen> {
               ),
               const SizedBox(height: 16),
               Text(
-                '안녕하세요! 👋',
+                AppLocalizations.of(context)!.chatGreeting,
                 style: TextStyle(
                   fontSize: 20,
                   fontWeight: FontWeight.bold,

@@ -87,4 +87,38 @@ class AppLocalizationsKo extends AppLocalizations {
 
   @override
   String get settings => '설정';
+
+  @override
+  String welcomeMessage(String userName) {
+    return '안녕하세요, $userName님!';
+  }
+
+  @override
+  String get defaultUserName => '사용자';
+
+  @override
+  String get chatGreeting => '안녕하세요! 👋';
+
+  @override
+  String get crushChatWelcome =>
+      '안녕하세요! 썸 관련 고민을 들어드릴 러브코치입니다. 💕 어떤 상황인지 자세히 말씀해 주세요.';
+
+  @override
+  String get relationshipChatWelcome =>
+      '안녕하세요! 연애 중인 분들의 고민을 상담해드리는 러브코치입니다. ❤️ 어떤 일이 있으셨나요?';
+
+  @override
+  String get breakupChatWelcome =>
+      '안녕하세요! 이별 후의 마음을 치료해드리는 러브코치입니다. 💙 힘든 시간을 겪고 계시는군요. 천천히 이야기해 주세요.';
+
+  @override
+  String get reunionChatWelcome =>
+      '안녕하세요! 재회에 관한 상담을 도와드리는 러브코치입니다. 💚 복잡한 마음일 텐데, 상황을 자세히 들려주세요.';
+
+  @override
+  String get themePreviewMessage1 => '안녕하세요! 오늘 기분이 어떠신가요?';
+
+  @override
+  String get themePreviewMessage2 =>
+      '안녕하세요! 저는 당신의 연애 상담사입니다. 오늘 하루 어떻게 보내셨는지 궁금해요.';
 }

@@ -99,32 +99,24 @@ class ProfileScreen extends ConsumerWidget {
                         icon: Icons.chat_bubble_outline,
                         title: '무료 상담 현황',
                         subtitle: userData.consultationStatusMessage,
-                        trailing: Column(
-                          mainAxisSize: MainAxisSize.min,
-                          crossAxisAlignment: CrossAxisAlignment.end,
-                          children: [
-                            Text(
-                              '${userData.freeConsultationsUsed}/${userData.freeConsultationsLimit}',
-                              style: const TextStyle(fontWeight: FontWeight.bold),
-                            ),
-                            Text(
-                              '하루 1회',
-                              style: TextStyle(
-                                fontSize: 11,
-                                color: Colors.grey[600],
-                              ),
-                            ),
-                          ],
+                        trailing: Text(
+                          '${userData.dailyConsultationsUsed}/${userData.dailyConsultationsLimit}',
+                          style: const TextStyle(
+                            fontWeight: FontWeight.bold,
+                            fontSize: 16,
+                          ),
                         ),
                       ),
                       const SizedBox(height: 16),
                     ],
                     
-                    // 설문조사 결과 메뉴 (임시 비활성화)
+                    // 설문조사 상태
                     _ProfileItem(
                       icon: Icons.assignment_outlined,
-                      title: '설문조사 하기',
-                      subtitle: '맞춤형 상담을 위한 설문조사',
+                      title: userData.hasCompletedSurvey ? '설문조사 결과' : '설문조사 하기',
+                      subtitle: userData.hasCompletedSurvey 
+                          ? '맞춤형 상담을 위한 설문조사 완료'
+                          : '맞춤형 상담을 위한 설문조사',
                       trailing: Row(
                         mainAxisSize: MainAxisSize.min,
                         children: [
@@ -134,14 +126,18 @@ class ProfileScreen extends ConsumerWidget {
                               vertical: 4,
                             ),
                             decoration: BoxDecoration(
-                              color: Colors.orange.withOpacity(0.2),
+                              color: userData.hasCompletedSurvey
+                                  ? Colors.green.withOpacity(0.2)
+                                  : Colors.orange.withOpacity(0.2),
                               borderRadius: BorderRadius.circular(12),
                             ),
-                            child: const Text(
-                              '미완료',
+                            child: Text(
+                              userData.hasCompletedSurvey ? '완료' : '미완료',
                               style: TextStyle(
                                 fontSize: 12,
-                                color: Colors.orange,
+                                color: userData.hasCompletedSurvey 
+                                    ? Colors.green 
+                                    : Colors.orange,
                                 fontWeight: FontWeight.bold,
                               ),
                             ),
@@ -150,7 +146,13 @@ class ProfileScreen extends ConsumerWidget {
                           const Icon(Icons.chevron_right),
                         ],
                       ),
-                      onTap: () => context.push('/survey'),
+                      onTap: () {
+                        if (userData.hasCompletedSurvey) {
+                          _showSurveyResult(context, ref, userData.id);
+                        } else {
+                          context.push('/survey');
+                        }
+                      },
                     ),
                     const SizedBox(height: 16),
                     
@@ -242,6 +244,34 @@ class ProfileScreen extends ConsumerWidget {
         error: (error, stack) => Center(child: Text('오류가 발생했습니다: $error')),
       ),
     );
+  }
+
+  void _showSurveyResult(BuildContext context, WidgetRef ref, String userId) async {
+    try {
+      final authService = ref.read(authServiceProvider);
+      final surveyData = await authService.getSurveyData(userId);
+      
+      if (surveyData != null && context.mounted) {
+        _showSurveyResultDialog(context, surveyData);
+      } else if (context.mounted) {
+        ScaffoldMessenger.of(context).showSnackBar(
+          const SnackBar(
+            content: Text('설문조사 결과를 찾을 수 없습니다.'),
+            backgroundColor: Colors.orange,
+          ),
+        );
+        context.push('/survey');
+      }
+    } catch (e) {
+      if (context.mounted) {
+        ScaffoldMessenger.of(context).showSnackBar(
+          SnackBar(
+            content: Text('설문조사 결과를 불러오는 중 오류가 발생했습니다: $e'),
+            backgroundColor: Colors.red,
+          ),
+        );
+      }
+    }
   }
 
   void _showAccountManagementDialog(BuildContext context, WidgetRef ref) {
@@ -516,7 +546,7 @@ class ProfileScreen extends ConsumerWidget {
             onPressed: () => Navigator.of(context).pop(),
             child: const Text('닫기'),
           ),
-          ElevatedButton(
+          TextButton(
             onPressed: () {
               Navigator.of(context).pop();
               context.push('/survey');

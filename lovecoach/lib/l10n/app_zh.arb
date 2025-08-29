@@ -1,0 +1,53 @@
+{
+  "@@locale": "zh",
+  
+  "languageSettings": "语言设置",
+  "languageSettingsMode": "语言设置模式",
+  "useSystemLanguage": "使用系统语言",
+  "useSystemLanguageDescription": "跟随设备的语言设置",
+  "currentLanguage": "当前语言",
+  "languageSelection": "语言选择",
+  "languageSettingsInfo": "语言设置信息",
+  
+  "korean": "한국어",
+  "english": "English",
+  "japanese": "日本語",
+  "chinese": "中文",
+  
+  "englishSubtitle": "English (US)",
+  "japaneseSubtitle": "日本語 (Japanese)",
+  "chineseSubtitle": "中文简体 (Simplified Chinese)",
+  
+  "realTimeTranslation": "实时翻译",
+  "realTimeTranslationDescription": "可以用您选择的语言与AI咨询师实时对话",
+  "aiModelOptimization": "AI模型优化",
+  "aiModelOptimizationDescription": "针对各种语言优化的AI模型提供更自然的咨询体验",
+  "instantApplication": "即时应用",
+  "instantApplicationDescription": "语言更改时会立即应用到整个应用，无需重启",
+  "chatHistoryPreservation": "语言更改后之前的聊天记录会被保留",
+  
+  "home": "首页",
+  "chat": "聊天",
+  "community": "社区",
+  "profile": "个人资料",
+  "settings": "设置",
+  
+  "welcomeMessage": "您好，{userName}！",
+  "@welcomeMessage": {
+    "placeholders": {
+      "userName": {
+        "type": "String"
+      }
+    }
+  },
+  "defaultUserName": "用户",
+  
+  "chatGreeting": "您好！ 👋",
+  "crushChatWelcome": "您好！我是专门倾听暗恋烦恼的恋爱教练。💕 请详细告诉我您的情况。",
+  "relationshipChatWelcome": "您好！我是为恋爱中的朋友们提供咨询的恋爱教练。❤️ 发生了什么事？",
+  "breakupChatWelcome": "您好！我是治愈分手后心灵的恋爱教练。💙 您正在经历困难的时光。请慢慢告诉我。",
+  "reunionChatWelcome": "您好！我是帮助复合咨询的恋爱教练。💚 心情一定很复杂，请详细告诉我情况。",
+  
+  "themePreviewMessage1": "您好！今天心情怎么样？",
+  "themePreviewMessage2": "您好！我是您的恋爱咨询师。今天过得怎么样呢？"
+}

@@ -38,7 +38,7 @@ class DailyResetService {
 
       final querySnapshot = await _firestore
           .collection('users')
-          .where('hasUsedTodaysConsultation', isEqualTo: true)
+          .where('dailyConsultationsUsed', isGreaterThan: 0)
           .get();
 
       if (querySnapshot.docs.isNotEmpty) {
@@ -46,7 +46,7 @@ class DailyResetService {
         
         for (final doc in querySnapshot.docs) {
           batch.update(doc.reference, {
-            'hasUsedTodaysConsultation': false,
+            'dailyConsultationsUsed': 0,
           });
         }
 
@@ -87,7 +87,7 @@ class DailyResetService {
     if (lastDateOnly.isBefore(today)) {
       try {
         await _firestore.collection('users').doc(userId).update({
-          'hasUsedTodaysConsultation': false,
+          'dailyConsultationsUsed': 0,
         });
         return true;
       } catch (e) {

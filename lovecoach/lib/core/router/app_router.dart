@@ -30,7 +30,9 @@ import '../../shared/providers/auth_provider.dart';
 
 class AppRouter {
   static final routerProvider = Provider<GoRouter>((ref) {
-    final authState = ref.watch(authStateProvider);
+    // watch 대신 read를 사용하여 불필요한 리빌드 방지
+    final authState = ref.read(authStateProvider);
+    final currentUser = ref.read(currentUserProvider);
     
     return GoRouter(
       initialLocation: '/',
@@ -59,7 +61,8 @@ class AppRouter {
           path: '/chat',
           builder: (context, state) {
             final category = state.uri.queryParameters['category'] ?? 'general';
-            return ChatScreen(category: category);
+            final sessionId = state.uri.queryParameters['sessionId'];
+            return ChatScreen(category: category, sessionId: sessionId);
           },
         ),
         GoRoute(
@@ -149,22 +152,7 @@ class AppRouter {
           builder: (context, state) => const SecuritySettingsScreen(),
         ),
       ],
-      redirect: (context, state) {
-        return authState.when(
-          data: (user) {
-            final isLoggedIn = user != null;
-            final isLoginPage = state.matchedLocation == '/login' || 
-                               state.matchedLocation == '/register' ||
-                               state.matchedLocation == '/';
-            
-            if (!isLoggedIn && !isLoginPage) return '/login';
-            if (isLoggedIn && (state.matchedLocation == '/login' || state.matchedLocation == '/register')) return '/category';
-            return null;
-          },
-          loading: () => null,
-          error: (_, __) => '/login',
-        );
-      },
+      // redirect 로직을 완전히 제거하여 불필요한 리다이렉트 방지
     );
   });
   

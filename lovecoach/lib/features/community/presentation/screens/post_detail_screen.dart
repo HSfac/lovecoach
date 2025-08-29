@@ -4,6 +4,7 @@ import 'package:go_router/go_router.dart';
 import '../../../../shared/providers/community_provider.dart';
 import '../../../../shared/providers/auth_provider.dart';
 import '../../../../shared/models/community_post.dart';
+import '../../../../shared/models/comment.dart';
 import '../widgets/comment_item.dart';
 
 class PostDetailScreen extends ConsumerStatefulWidget {
@@ -22,6 +23,7 @@ class _PostDetailScreenState extends ConsumerState<PostDetailScreen> {
   final _commentController = TextEditingController();
   final _scrollController = ScrollController();
   bool _isSubmittingComment = false;
+  Comment? _replyingTo;
 
   @override
   void dispose() {
@@ -47,17 +49,25 @@ class _PostDetailScreenState extends ConsumerState<PostDetailScreen> {
         authorId: currentUser.uid,
         authorName: currentUser.displayName ?? '익명',
         content: commentText,
+        parentId: _replyingTo?.id,
       );
 
-      _commentController.clear();
-      FocusScope.of(context).unfocus();
+      if (mounted) {
+        _commentController.clear();
+        setState(() {
+          _replyingTo = null;
+        });
+        FocusScope.of(context).unfocus();
+      }
 
       WidgetsBinding.instance.addPostFrameCallback((_) {
-        _scrollController.animateTo(
-          _scrollController.position.maxScrollExtent,
-          duration: const Duration(milliseconds: 300),
-          curve: Curves.easeOut,
-        );
+        if (_scrollController.hasClients) {
+          _scrollController.animateTo(
+            _scrollController.position.maxScrollExtent,
+            duration: const Duration(milliseconds: 300),
+            curve: Curves.easeOut,
+          );
+        }
       });
     } catch (e) {
       if (mounted) {
@@ -75,6 +85,24 @@ class _PostDetailScreenState extends ConsumerState<PostDetailScreen> {
         });
       }
     }
+  }
+
+  void _startReply(Comment comment) {
+    setState(() {
+      _replyingTo = comment;
+    });
+    _commentController.clear();
+    
+    // Focus on the text field after the widget rebuilds
+    WidgetsBinding.instance.addPostFrameCallback((_) {
+      FocusScope.of(context).requestFocus();
+    });
+  }
+
+  void _cancelReply() {
+    setState(() {
+      _replyingTo = null;
+    });
   }
 
   @override
@@ -340,6 +368,7 @@ class _PostDetailScreenState extends ConsumerState<PostDetailScreen> {
                               .toggleCommentLike(comment.id, currentUser.uid);
                         }
                       },
+                      onReply: () => _startReply(comment),
                       onDelete: canDelete
                           ? () {
                               showDialog(
@@ -400,56 +429,99 @@ class _PostDetailScreenState extends ConsumerState<PostDetailScreen> {
       ),
       padding: const EdgeInsets.all(16),
       child: SafeArea(
-        child: Row(
+        child: Column(
           children: [
-            Expanded(
-              child: TextField(
-                controller: _commentController,
-                decoration: InputDecoration(
-                  hintText: '댓글을 입력하세요...',
-                  border: OutlineInputBorder(
-                    borderRadius: BorderRadius.circular(24),
-                    borderSide: BorderSide(color: Colors.grey[300]!),
-                  ),
-                  focusedBorder: OutlineInputBorder(
-                    borderRadius: BorderRadius.circular(24),
-                    borderSide: const BorderSide(color: Colors.pink),
-                  ),
-                  contentPadding: const EdgeInsets.symmetric(
-                    horizontal: 16,
-                    vertical: 10,
-                  ),
+            if (_replyingTo != null)
+              Container(
+                width: double.infinity,
+                padding: const EdgeInsets.all(12),
+                margin: const EdgeInsets.only(bottom: 8),
+                decoration: BoxDecoration(
+                  color: Colors.blue[50],
+                  borderRadius: BorderRadius.circular(8),
+                  border: Border.all(color: Colors.blue[200]!),
                 ),
-                maxLines: null,
-                textInputAction: TextInputAction.send,
-                onSubmitted: (_) => _submitComment(),
-              ),
-            ),
-            const SizedBox(width: 8),
-            Material(
-              color: Colors.pink,
-              borderRadius: BorderRadius.circular(24),
-              child: InkWell(
-                onTap: _isSubmittingComment ? null : _submitComment,
-                borderRadius: BorderRadius.circular(24),
-                child: Container(
-                  padding: const EdgeInsets.all(12),
-                  child: _isSubmittingComment
-                      ? const SizedBox(
-                          width: 20,
-                          height: 20,
-                          child: CircularProgressIndicator(
-                            color: Colors.white,
-                            strokeWidth: 2,
-                          ),
-                        )
-                      : const Icon(
-                          Icons.send,
-                          color: Colors.white,
-                          size: 20,
+                child: Row(
+                  children: [
+                    Icon(
+                      Icons.reply,
+                      size: 16,
+                      color: Colors.blue[600],
+                    ),
+                    const SizedBox(width: 8),
+                    Expanded(
+                      child: Text(
+                        '${_replyingTo!.authorName}님에게 답글',
+                        style: TextStyle(
+                          fontSize: 12,
+                          color: Colors.blue[600],
+                          fontWeight: FontWeight.w500,
                         ),
+                      ),
+                    ),
+                    GestureDetector(
+                      onTap: _cancelReply,
+                      child: Icon(
+                        Icons.close,
+                        size: 16,
+                        color: Colors.blue[600],
+                      ),
+                    ),
+                  ],
                 ),
               ),
+            Row(
+              children: [
+                Expanded(
+                  child: TextField(
+                    controller: _commentController,
+                    decoration: InputDecoration(
+                      hintText: _replyingTo != null ? '답글을 입력하세요...' : '댓글을 입력하세요...',
+                      border: OutlineInputBorder(
+                        borderRadius: BorderRadius.circular(24),
+                        borderSide: BorderSide(color: Colors.grey[300]!),
+                      ),
+                      focusedBorder: OutlineInputBorder(
+                        borderRadius: BorderRadius.circular(24),
+                        borderSide: const BorderSide(color: Colors.pink),
+                      ),
+                      contentPadding: const EdgeInsets.symmetric(
+                        horizontal: 16,
+                        vertical: 10,
+                      ),
+                    ),
+                    maxLines: null,
+                    textInputAction: TextInputAction.send,
+                    onSubmitted: (_) => _submitComment(),
+                  ),
+                ),
+                const SizedBox(width: 8),
+                Material(
+                  color: Colors.pink,
+                  borderRadius: BorderRadius.circular(24),
+                  child: InkWell(
+                    onTap: _isSubmittingComment ? null : _submitComment,
+                    borderRadius: BorderRadius.circular(24),
+                    child: Container(
+                      padding: const EdgeInsets.all(12),
+                      child: _isSubmittingComment
+                          ? const SizedBox(
+                              width: 20,
+                              height: 20,
+                              child: CircularProgressIndicator(
+                                color: Colors.white,
+                                strokeWidth: 2,
+                              ),
+                            )
+                          : const Icon(
+                              Icons.send,
+                              color: Colors.white,
+                              size: 20,
+                            ),
+                    ),
+                  ),
+                ),
+              ],
             ),
           ],
         ),

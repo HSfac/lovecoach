@@ -596,28 +596,45 @@ class _SurveyScreenState extends ConsumerState<SurveyScreen> {
 
   void _completeSurvey() async {
     try {
-      // 최종 완료 검증
-      if (selectedGender == null || 
-          selectedAge == null || 
-          relationshipStatus == null || 
-          interests.isEmpty || 
-          communicationStyle == null) {
+      // 최종 완료 검증 - 더 강화된 체크
+      final missingItems = <String>[];
+      
+      if (selectedGender == null || selectedGender!.isEmpty) {
+        missingItems.add('성별');
+      }
+      if (selectedAge == null) {
+        missingItems.add('연령대');
+      }
+      if (relationshipStatus == null || relationshipStatus!.isEmpty) {
+        missingItems.add('연애 상태');
+      }
+      if (interests.isEmpty) {
+        missingItems.add('관심 주제 (최소 1개)');
+      }
+      if (communicationStyle == null || communicationStyle!.isEmpty) {
+        missingItems.add('대화 스타일');
+      }
+      
+      if (missingItems.isNotEmpty) {
         ScaffoldMessenger.of(context).showSnackBar(
-          const SnackBar(
-            content: Text('모든 설문 항목을 완성해주세요.'),
+          SnackBar(
+            content: Text('다음 항목을 완성해주세요: ${missingItems.join(', ')}'),
             backgroundColor: Colors.orange,
+            duration: const Duration(seconds: 4),
           ),
         );
         return;
       }
       
+      print('설문 저장 시도: gender=$selectedGender, age=$selectedAge, status=$relationshipStatus, interests=$interests, style=$communicationStyle');
+      
       // 설문 결과를 Firebase에 저장
       final success = await ref.read(authNotifierProvider.notifier).saveSurveyData(
-        gender: selectedGender,
-        ageRange: selectedAge,
-        relationshipStatus: relationshipStatus,
-        interests: interests,
-        communicationStyle: communicationStyle,
+        gender: selectedGender!,
+        ageRange: selectedAge!,
+        relationshipStatus: relationshipStatus!,
+        interests: List<String>.from(interests),
+        communicationStyle: communicationStyle!,
       );
       
       if (success && mounted) {
@@ -626,28 +643,45 @@ class _SurveyScreenState extends ConsumerState<SurveyScreen> {
           const SnackBar(
             content: Text('설문조사가 완료되었습니다! 🎉'),
             backgroundColor: Colors.green,
+            duration: Duration(seconds: 2),
           ),
         );
         
-        // 카테고리 선택 화면으로 이동
-        context.go('/category');
+        // 잠시 대기 후 이동
+        await Future.delayed(const Duration(milliseconds: 500));
+        
+        // 설문조사 완료 후 적절한 화면으로 이동
+        if (mounted) {
+          // 이전 화면이 프로필이면 다시 프로필로, 그렇지 않으면 카테고리로
+          if (context.canPop()) {
+            context.pop(); // 프로필에서 왔다면 프로필로 돌아가기
+          } else {
+            context.go('/category'); // 온보딩에서 왔다면 카테고리로
+          }
+        }
       } else if (mounted) {
         // 에러 처리
         ScaffoldMessenger.of(context).showSnackBar(
           const SnackBar(
-            content: Text('설문 저장 중 오류가 발생했습니다. 모든 항목이 완성되었는지 확인 후 다시 시도해주세요.'),
+            content: Text('설문 저장 중 오류가 발생했습니다. 잠시 후 다시 시도해주세요.'),
             backgroundColor: Colors.red,
+            duration: Duration(seconds: 3),
           ),
         );
       }
     } catch (e) {
+      print('설문 완료 에러: $e');
       if (mounted) {
+        String errorMessage = '설문 저장 중 오류가 발생했습니다';
+        if (e.toString().contains('설문조사가 완전히')) {
+          errorMessage = e.toString().replaceFirst('Exception: ', '');
+        }
+        
         ScaffoldMessenger.of(context).showSnackBar(
           SnackBar(
-            content: Text(e.toString().contains('설문조사가 완전히') ? 
-              e.toString().replaceFirst('Exception: ', '') : 
-              '설문 저장 중 오류가 발생했습니다: ${e.toString()}'),
+            content: Text(errorMessage),
             backgroundColor: Colors.red,
+            duration: const Duration(seconds: 4),
           ),
         );
       }

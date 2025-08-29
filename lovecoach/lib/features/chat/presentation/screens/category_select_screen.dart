@@ -5,6 +5,7 @@ import '../../../../shared/models/chat_message.dart';
 import '../../../../shared/providers/auth_provider.dart';
 import '../../../../core/theme/app_theme.dart';
 import '../../../../shared/widgets/notification_widget.dart';
+import '../../../../generated/app_localizations.dart';
 
 class CategorySelectScreen extends ConsumerWidget {
   const CategorySelectScreen({super.key});
@@ -46,7 +47,7 @@ class CategorySelectScreen extends ConsumerWidget {
                         crossAxisAlignment: CrossAxisAlignment.start,
                         children: [
                           Text(
-                            '안녕하세요, ${userData?.displayName ?? '사용자'}님!',
+                            AppLocalizations.of(context)!.welcomeMessage(userData?.displayName ?? AppLocalizations.of(context)!.defaultUserName),
                             style: const TextStyle(
                               fontSize: 24,
                               fontWeight: FontWeight.bold,
