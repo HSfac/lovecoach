@@ -10,6 +10,7 @@ import '../../features/chat/presentation/screens/chat_screen.dart';
 import '../../features/chat/presentation/screens/category_select_screen.dart';
 import '../../features/subscription/presentation/screens/subscription_screen.dart';
 import '../../features/profile/presentation/screens/profile_screen.dart';
+import '../../features/profile/presentation/screens/rank_guide_screen.dart';
 import '../../features/settings/presentation/screens/ai_settings_screen.dart';
 import '../../features/settings/presentation/screens/settings_screen.dart';
 import '../../features/settings/presentation/screens/notification_settings_screen.dart';
@@ -150,6 +151,10 @@ class AppRouter {
         GoRoute(
           path: '/security-settings',
           builder: (context, state) => const SecuritySettingsScreen(),
+        ),
+        GoRoute(
+          path: '/rank-guide',
+          builder: (context, state) => const RankGuideScreen(),
         ),
       ],
       // redirect 로직을 완전히 제거하여 불필요한 리다이렉트 방지

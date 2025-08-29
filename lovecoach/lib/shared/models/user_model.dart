@@ -260,14 +260,15 @@ class UserModel {
 
   String get userRank {
     final level = userLevel;
-    if (level == 1) return '새내기';
-    if (level <= 3) return '연애 입문자';
-    if (level <= 5) return '연애 학습자';
-    if (level <= 7) return '연애 숙련자';
-    if (level <= 10) return '연애 마스터';
-    if (level <= 15) return '연애 전문가';
-    if (level <= 25) return '연애 멘토';
-    return '연애 구루';
+    if (level == 1) return '풋사랑';
+    if (level <= 3) return '설레임';
+    if (level <= 5) return '첫키스';
+    if (level <= 7) return '달콤한사랑';
+    if (level <= 10) return '열정적사랑';
+    if (level <= 15) return '진실한사랑';
+    if (level <= 25) return '운명적사랑';
+    if (level <= 35) return '영원한사랑';
+    return '사랑의전설';
   }
 
   int get expForNextLevel {
@@ -314,5 +315,47 @@ class UserModel {
     final current = experiencePoints - expForCurrentLevel;
     final needed = expForNextLevel - expForCurrentLevel;
     return '$current / $needed';
+  }
+
+  // 등급별 색상
+  Map<String, int> get rankColor {
+    final level = userLevel;
+    if (level == 1) return {'r': 156, 'g': 204, 'b': 101}; // 연한 초록 (새싹)
+    if (level <= 3) return {'r': 255, 'g': 182, 'b': 193}; // 핑크 (설레임)
+    if (level <= 5) return {'r': 255, 'g': 105, 'b': 180}; // 핫핑크 (첫키스)
+    if (level <= 7) return {'r': 255, 'g': 69, 'b': 0}; // 오렌지레드 (달콤한사랑)
+    if (level <= 10) return {'r': 220, 'g': 20, 'b': 60}; // 크림슨 (열정적사랑)
+    if (level <= 15) return {'r': 128, 'g': 0, 'b': 128}; // 퍼플 (진실한사랑)
+    if (level <= 25) return {'r': 75, 'g': 0, 'b': 130}; // 인디고 (운명적사랑)
+    if (level <= 35) return {'r': 255, 'g': 215, 'b': 0}; // 골드 (영원한사랑)
+    return {'r': 255, 'g': 20, 'b': 147}; // 딥핑크 (사랑의전설)
+  }
+
+  // 등급별 이모지
+  String get rankEmoji {
+    final level = userLevel;
+    if (level == 1) return '🌱'; // 새싹
+    if (level <= 3) return '💕'; // 설레임
+    if (level <= 5) return '💋'; // 첫키스
+    if (level <= 7) return '🍯'; // 달콤한사랑
+    if (level <= 10) return '🔥'; // 열정적사랑
+    if (level <= 15) return '💖'; // 진실한사랑
+    if (level <= 25) return '✨'; // 운명적사랑
+    if (level <= 35) return '👑'; // 영원한사랑
+    return '🏆'; // 사랑의전설
+  }
+
+  // 등급별 설명
+  String get rankDescription {
+    final level = userLevel;
+    if (level == 1) return '연애의 첫걸음을 내딛는 단계입니다';
+    if (level <= 3) return '마음이 두근거리며 설레는 단계입니다';
+    if (level <= 5) return '달콤한 로맨스를 경험하는 단계입니다';
+    if (level <= 7) return '사랑의 달콤함을 만끽하는 단계입니다';
+    if (level <= 10) return '열정적인 사랑에 빠진 단계입니다';
+    if (level <= 15) return '진실하고 깊은 사랑을 아는 단계입니다';
+    if (level <= 25) return '운명적인 만남을 믿는 단계입니다';
+    if (level <= 35) return '영원한 사랑의 가치를 아는 단계입니다';
+    return '사랑의 모든 것을 아는 전설적인 단계입니다';
   }
 }

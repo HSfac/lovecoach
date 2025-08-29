@@ -569,6 +569,9 @@ class ProfileScreen extends ConsumerWidget {
   }
 
   Widget _buildUserLevelCard(userData) {
+    final rankColorMap = userData.rankColor;
+    final rankColor = Color.fromRGBO(rankColorMap['r'], rankColorMap['g'], rankColorMap['b'], 1.0);
+    
     return Container(
       padding: const EdgeInsets.all(20),
       decoration: BoxDecoration(
@@ -576,15 +579,22 @@ class ProfileScreen extends ConsumerWidget {
           begin: Alignment.topLeft,
           end: Alignment.bottomRight,
           colors: [
-            AppTheme.primaryColor.withOpacity(0.1),
-            AppTheme.accentColor.withOpacity(0.1),
+            rankColor.withOpacity(0.1),
+            rankColor.withOpacity(0.05),
           ],
         ),
         borderRadius: BorderRadius.circular(16),
         border: Border.all(
-          color: AppTheme.primaryColor.withOpacity(0.2),
-          width: 1,
+          color: rankColor.withOpacity(0.3),
+          width: 2,
         ),
+        boxShadow: [
+          BoxShadow(
+            color: rankColor.withOpacity(0.1),
+            blurRadius: 10,
+            offset: const Offset(0, 3),
+          ),
+        ],
       ),
       child: Column(
         children: [
@@ -594,21 +604,20 @@ class ProfileScreen extends ConsumerWidget {
                 padding: const EdgeInsets.all(12),
                 decoration: BoxDecoration(
                   gradient: LinearGradient(
-                    colors: [AppTheme.primaryColor, AppTheme.accentColor],
+                    colors: [rankColor, rankColor.withOpacity(0.8)],
                   ),
                   borderRadius: BorderRadius.circular(12),
                   boxShadow: [
                     BoxShadow(
-                      color: AppTheme.primaryColor.withOpacity(0.3),
+                      color: rankColor.withOpacity(0.3),
                       blurRadius: 8,
                       offset: const Offset(0, 2),
                     ),
                   ],
                 ),
-                child: Icon(
-                  _getLevelIcon(userData.userLevel),
-                  color: Colors.white,
-                  size: 24,
+                child: Text(
+                  userData.rankEmoji,
+                  style: const TextStyle(fontSize: 24),
                 ),
               ),
               const SizedBox(width: 16),
@@ -630,7 +639,7 @@ class ProfileScreen extends ConsumerWidget {
                         Container(
                           padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 4),
                           decoration: BoxDecoration(
-                            color: AppTheme.primaryColor.withOpacity(0.2),
+                            color: rankColor.withOpacity(0.2),
                             borderRadius: BorderRadius.circular(12),
                           ),
                           child: Text(
@@ -638,7 +647,7 @@ class ProfileScreen extends ConsumerWidget {
                             style: TextStyle(
                               fontSize: 12,
                               fontWeight: FontWeight.bold,
-                              color: AppTheme.primaryColor,
+                              color: rankColor,
                             ),
                           ),
                         ),
@@ -687,11 +696,48 @@ class ProfileScreen extends ConsumerWidget {
                 value: userData.levelProgress,
                 backgroundColor: Colors.grey[300],
                 valueColor: AlwaysStoppedAnimation<Color>(
-                  AppTheme.primaryColor,
+                  rankColor,
                 ),
                 minHeight: 6,
               ),
             ],
+          ),
+          
+          const SizedBox(height: 12),
+          
+          // 등급표 보기 버튼
+          GestureDetector(
+            onTap: () => context.push('/rank-guide'),
+            child: Container(
+              padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
+              decoration: BoxDecoration(
+                color: AppTheme.primaryColor.withOpacity(0.1),
+                borderRadius: BorderRadius.circular(20),
+                border: Border.all(
+                  color: AppTheme.primaryColor.withOpacity(0.3),
+                  width: 1,
+                ),
+              ),
+              child: Row(
+                mainAxisSize: MainAxisSize.min,
+                children: [
+                  Icon(
+                    Icons.list_alt,
+                    size: 16,
+                    color: AppTheme.primaryColor,
+                  ),
+                  const SizedBox(width: 6),
+                  Text(
+                    '등급표 보기',
+                    style: TextStyle(
+                      fontSize: 12,
+                      fontWeight: FontWeight.bold,
+                      color: AppTheme.primaryColor,
+                    ),
+                  ),
+                ],
+              ),
+            ),
           ),
           
           const SizedBox(height: 16),
