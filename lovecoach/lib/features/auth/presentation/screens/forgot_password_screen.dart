@@ -5,6 +5,7 @@ import '../../../../core/theme/app_theme.dart';
 import '../../../../shared/providers/auth_provider.dart';
 import '../../../../shared/widgets/custom_button.dart';
 import '../../../../shared/widgets/custom_text_field.dart';
+import '../../../../generated/app_localizations.dart';
 
 class ForgotPasswordScreen extends ConsumerStatefulWidget {
   const ForgotPasswordScreen({super.key});
@@ -84,7 +85,7 @@ class _ForgotPasswordScreenState extends ConsumerState<ForgotPasswordScreen> {
           
           // 제목
           const Text(
-            '비밀번호를 잊으셨나요?',
+            AppLocalizations.of(context)!.forgotPassword,
             style: TextStyle(
               fontSize: 24,
               fontWeight: FontWeight.bold,
@@ -96,7 +97,7 @@ class _ForgotPasswordScreenState extends ConsumerState<ForgotPasswordScreen> {
           
           // 설명
           const Text(
-            '등록하신 이메일 주소를 입력해주세요.\n비밀번호 재설정 링크를 보내드립니다.',
+            AppLocalizations.of(context)!.forgotPasswordDescription.replaceAll('\\n', '\n'),
             textAlign: TextAlign.center,
             style: TextStyle(
               fontSize: 16,
@@ -110,14 +111,14 @@ class _ForgotPasswordScreenState extends ConsumerState<ForgotPasswordScreen> {
           // 이메일 입력
           CustomTextField(
             controller: _emailController,
-            labelText: '이메일 주소',
+            labelText: AppLocalizations.of(context)!.emailAddress,
             keyboardType: TextInputType.emailAddress,
             validator: (value) {
               if (value == null || value.isEmpty) {
-                return '이메일을 입력해주세요';
+                return AppLocalizations.of(context)!.enterEmail;
               }
               if (!value.contains('@')) {
-                return '올바른 이메일 형식을 입력해주세요';
+                return AppLocalizations.of(context)!.enterValidEmail;
               }
               return null;
             },
@@ -127,7 +128,7 @@ class _ForgotPasswordScreenState extends ConsumerState<ForgotPasswordScreen> {
           
           // 재설정 메일 발송 버튼
           CustomButton(
-            text: '비밀번호 재설정 메일 발송',
+            text: AppLocalizations.of(context)!.sendResetEmail,
             onPressed: _isLoading ? null : _sendResetEmail,
             isLoading: _isLoading,
           ),
@@ -138,7 +139,7 @@ class _ForgotPasswordScreenState extends ConsumerState<ForgotPasswordScreen> {
           TextButton(
             onPressed: () => context.pop(),
             child: const Text(
-              '로그인으로 돌아가기',
+              AppLocalizations.of(context)!.backToLogin,
               style: TextStyle(
                 color: AppTheme.primaryColor,
                 fontWeight: FontWeight.w600,

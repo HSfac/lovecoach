@@ -114,4 +114,199 @@ class AppLocalizationsZh extends AppLocalizations {
 
   @override
   String get themePreviewMessage2 => '您好！我是您的恋爱咨询师。今天过得怎么样呢？';
+
+  @override
+  String get appName => '恋爱教练';
+
+  @override
+  String get appSubtitle => 'AI陪伴的恋爱咨询';
+
+  @override
+  String get forgotPassword => '忘记密码了吗？';
+
+  @override
+  String get forgotPasswordDescription => '请输入您注册的邮箱地址。\\n我们将发送密码重置链接给您。';
+
+  @override
+  String get emailAddress => '邮箱地址';
+
+  @override
+  String get enterEmail => '请输入邮箱';
+
+  @override
+  String get enterValidEmail => '请输入正确的邮箱格式';
+
+  @override
+  String get sendResetEmail => '发送密码重置邮件';
+
+  @override
+  String get backToLogin => '返回登录';
+
+  @override
+  String get login => '登录';
+
+  @override
+  String get register => '注册';
+
+  @override
+  String get password => '密码';
+
+  @override
+  String get confirmPassword => '确认密码';
+
+  @override
+  String get email => '邮箱';
+
+  @override
+  String get enterPassword => '请输入密码';
+
+  @override
+  String get passwordMinLength => '密码至少需要6位字符';
+
+  @override
+  String get signInWithGoogle => '使用Google登录';
+
+  @override
+  String get testAccountLogin => '使用测试账户进入';
+
+  @override
+  String get noAccount => '没有账户吗？';
+
+  @override
+  String get signUp => '注册';
+
+  @override
+  String get loginFailed => '登录失败，请重试。';
+
+  @override
+  String get googleSignInFailed => 'Google登录失败。';
+
+  @override
+  String get alreadyHaveAccount => '已有账户吗？';
+
+  @override
+  String get name => '姓名';
+
+  @override
+  String get enterName => '请输入姓名';
+
+  @override
+  String get nameMinLength => '姓名至少需要2个字符';
+
+  @override
+  String get enterConfirmPassword => '请输入确认密码';
+
+  @override
+  String get passwordMismatch => '密码不匹配';
+
+  @override
+  String get agreeToTerms => '我同意服务条款';
+
+  @override
+  String get agreeToTermsRequired => '请同意服务条款。';
+
+  @override
+  String get signUpFailed => '注册失败，请重试。';
+
+  @override
+  String get user => '用户';
+
+  @override
+  String get premium => '高级版';
+
+  @override
+  String get freePlan => '免费套餐';
+
+  @override
+  String get aiModelSettings => 'AI模型设置';
+
+  @override
+  String get current => '当前';
+
+  @override
+  String get notificationSettings => '通知设置';
+
+  @override
+  String get chatHistoryManagement => '聊天记录管理';
+
+  @override
+  String get accountAndSecurity => '账户与安全';
+
+  @override
+  String get changePassword => '修改密码';
+
+  @override
+  String get securitySettings => '安全设置';
+
+  @override
+  String get appSettings => '应用设置';
+
+  @override
+  String get themeSettings => '主题设置';
+
+  @override
+  String get storageManagement => '存储管理';
+
+  @override
+  String get supportAndInfo => '支持与信息';
+
+  @override
+  String get customerSupport => '客服中心';
+
+  @override
+  String get logout => '退出登录';
+
+  @override
+  String get confirmLogout => '确定要退出登录吗？';
+
+  @override
+  String get cancel => '取消';
+
+  @override
+  String get subscriptionStatus => '订阅状态';
+
+  @override
+  String get premiumSubscribed => '已订阅高级版';
+
+  @override
+  String get upgrade => '升级';
+
+  @override
+  String get freeConsultationStatus => '免费咨询状态';
+
+  @override
+  String get surveyResults => '调查结果';
+
+  @override
+  String get takeSurvey => '参与调查';
+
+  @override
+  String get completed => '已完成';
+
+  @override
+  String get incomplete => '未完成';
+
+  @override
+  String get aiSettings => 'AI设置';
+
+  @override
+  String get support => '支持';
+
+  @override
+  String get faq => '常见问题';
+
+  @override
+  String get oneToOneInquiry => '1对1咨询';
+
+  @override
+  String get inquiryContent => '咨询内容';
+
+  @override
+  String get inquire => '咨询';
+
+  @override
+  String get contactInfo => '联系信息';
+
+  @override
+  String get responseTime => '回复时间';
 }

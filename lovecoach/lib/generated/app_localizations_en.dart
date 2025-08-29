@@ -124,4 +124,200 @@ class AppLocalizationsEn extends AppLocalizations {
   @override
   String get themePreviewMessage2 =>
       'Hello! I\'m your relationship counselor. I\'m curious about how your day went.';
+
+  @override
+  String get appName => 'Love Coach';
+
+  @override
+  String get appSubtitle => 'AI-powered relationship counseling';
+
+  @override
+  String get forgotPassword => 'Forgot your password?';
+
+  @override
+  String get forgotPasswordDescription =>
+      'Please enter your registered email address.\\nWe\'ll send you a password reset link.';
+
+  @override
+  String get emailAddress => 'Email Address';
+
+  @override
+  String get enterEmail => 'Please enter your email';
+
+  @override
+  String get enterValidEmail => 'Please enter a valid email format';
+
+  @override
+  String get sendResetEmail => 'Send Password Reset Email';
+
+  @override
+  String get backToLogin => 'Back to Login';
+
+  @override
+  String get login => 'Login';
+
+  @override
+  String get register => 'Sign Up';
+
+  @override
+  String get password => 'Password';
+
+  @override
+  String get confirmPassword => 'Confirm Password';
+
+  @override
+  String get email => 'Email';
+
+  @override
+  String get enterPassword => 'Please enter your password';
+
+  @override
+  String get passwordMinLength => 'Password must be at least 6 characters';
+
+  @override
+  String get signInWithGoogle => 'Sign in with Google';
+
+  @override
+  String get testAccountLogin => 'Enter with test account';
+
+  @override
+  String get noAccount => 'Don\'t have an account?';
+
+  @override
+  String get signUp => 'Sign Up';
+
+  @override
+  String get loginFailed => 'Login failed. Please try again.';
+
+  @override
+  String get googleSignInFailed => 'Google sign-in failed.';
+
+  @override
+  String get alreadyHaveAccount => 'Already have an account?';
+
+  @override
+  String get name => 'Name';
+
+  @override
+  String get enterName => 'Please enter your name';
+
+  @override
+  String get nameMinLength => 'Name must be at least 2 characters';
+
+  @override
+  String get enterConfirmPassword => 'Please enter password confirmation';
+
+  @override
+  String get passwordMismatch => 'Passwords do not match';
+
+  @override
+  String get agreeToTerms => 'I agree to the Terms of Service';
+
+  @override
+  String get agreeToTermsRequired => 'Please agree to the Terms of Service.';
+
+  @override
+  String get signUpFailed => 'Sign up failed. Please try again.';
+
+  @override
+  String get user => 'User';
+
+  @override
+  String get premium => 'Premium';
+
+  @override
+  String get freePlan => 'Free Plan';
+
+  @override
+  String get aiModelSettings => 'AI Model Settings';
+
+  @override
+  String get current => 'Current';
+
+  @override
+  String get notificationSettings => 'Notification Settings';
+
+  @override
+  String get chatHistoryManagement => 'Chat History Management';
+
+  @override
+  String get accountAndSecurity => 'Account & Security';
+
+  @override
+  String get changePassword => 'Change Password';
+
+  @override
+  String get securitySettings => 'Security Settings';
+
+  @override
+  String get appSettings => 'App Settings';
+
+  @override
+  String get themeSettings => 'Theme Settings';
+
+  @override
+  String get storageManagement => 'Storage Management';
+
+  @override
+  String get supportAndInfo => 'Support & Information';
+
+  @override
+  String get customerSupport => 'Customer Support';
+
+  @override
+  String get logout => 'Logout';
+
+  @override
+  String get confirmLogout => 'Are you sure you want to logout?';
+
+  @override
+  String get cancel => 'Cancel';
+
+  @override
+  String get subscriptionStatus => 'Subscription Status';
+
+  @override
+  String get premiumSubscribed => 'Premium Subscribed';
+
+  @override
+  String get upgrade => 'Upgrade';
+
+  @override
+  String get freeConsultationStatus => 'Free Consultation Status';
+
+  @override
+  String get surveyResults => 'Survey Results';
+
+  @override
+  String get takeSurvey => 'Take Survey';
+
+  @override
+  String get completed => 'Completed';
+
+  @override
+  String get incomplete => 'Incomplete';
+
+  @override
+  String get aiSettings => 'AI Settings';
+
+  @override
+  String get support => 'Support';
+
+  @override
+  String get faq => 'FAQ';
+
+  @override
+  String get oneToOneInquiry => '1:1 Inquiry';
+
+  @override
+  String get inquiryContent => 'Inquiry Content';
+
+  @override
+  String get inquire => 'Inquire';
+
+  @override
+  String get contactInfo => 'Contact Information';
+
+  @override
+  String get responseTime => 'Response Time';
 }

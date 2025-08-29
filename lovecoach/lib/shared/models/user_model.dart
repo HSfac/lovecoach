@@ -21,6 +21,13 @@ class UserModel {
   final int communityLikeReceived;
   final int communityLikeGiven;
   final String communityRank;
+  
+  // User level system
+  final int totalConsultations;
+  final int consecutiveDays;
+  final int currentStreak;
+  final DateTime? lastActiveDate;
+  final int experiencePoints;
 
   const UserModel({
     required this.id,
@@ -43,6 +50,11 @@ class UserModel {
     this.communityLikeReceived = 0,
     this.communityLikeGiven = 0,
     this.communityRank = 'newbie',
+    this.totalConsultations = 0,
+    this.consecutiveDays = 0,
+    this.currentStreak = 0,
+    this.lastActiveDate,
+    this.experiencePoints = 0,
   });
 
   factory UserModel.fromFirestore(Map<String, dynamic> data, String id) {
@@ -67,6 +79,11 @@ class UserModel {
       communityLikeReceived: data['communityLikeReceived'] ?? 0,
       communityLikeGiven: data['communityLikeGiven'] ?? 0,
       communityRank: data['communityRank'] ?? 'newbie',
+      totalConsultations: data['totalConsultations'] ?? 0,
+      consecutiveDays: data['consecutiveDays'] ?? 0,
+      currentStreak: data['currentStreak'] ?? 0,
+      lastActiveDate: data['lastActiveDate']?.toDate(),
+      experiencePoints: data['experiencePoints'] ?? 0,
     );
   }
 
@@ -91,6 +108,11 @@ class UserModel {
       'communityLikeReceived': communityLikeReceived,
       'communityLikeGiven': communityLikeGiven,
       'communityRank': communityRank,
+      'totalConsultations': totalConsultations,
+      'consecutiveDays': consecutiveDays,
+      'currentStreak': currentStreak,
+      'lastActiveDate': lastActiveDate,
+      'experiencePoints': experiencePoints,
     };
   }
 
@@ -115,6 +137,11 @@ class UserModel {
     int? communityLikeReceived,
     int? communityLikeGiven,
     String? communityRank,
+    int? totalConsultations,
+    int? consecutiveDays,
+    int? currentStreak,
+    DateTime? lastActiveDate,
+    int? experiencePoints,
   }) {
     return UserModel(
       id: id ?? this.id,
@@ -137,6 +164,11 @@ class UserModel {
       communityLikeReceived: communityLikeReceived ?? this.communityLikeReceived,
       communityLikeGiven: communityLikeGiven ?? this.communityLikeGiven,
       communityRank: communityRank ?? this.communityRank,
+      totalConsultations: totalConsultations ?? this.totalConsultations,
+      consecutiveDays: consecutiveDays ?? this.consecutiveDays,
+      currentStreak: currentStreak ?? this.currentStreak,
+      lastActiveDate: lastActiveDate ?? this.lastActiveDate,
+      experiencePoints: experiencePoints ?? this.experiencePoints,
     );
   }
 
@@ -209,5 +241,78 @@ class UserModel {
     }
     
     return '무료 상담 $remaining회 남음 (오늘 $todayRemaining/${dailyConsultationsLimit}회 가능)';
+  }
+
+  // 레벨 시스템 관련 계산
+  int get userLevel {
+    if (experiencePoints < 100) return 1;
+    if (experiencePoints < 300) return 2;
+    if (experiencePoints < 600) return 3;
+    if (experiencePoints < 1000) return 4;
+    if (experiencePoints < 1500) return 5;
+    if (experiencePoints < 2100) return 6;
+    if (experiencePoints < 2800) return 7;
+    if (experiencePoints < 3600) return 8;
+    if (experiencePoints < 4500) return 9;
+    if (experiencePoints < 5500) return 10;
+    return (experiencePoints ~/ 1000).clamp(10, 50);
+  }
+
+  String get userRank {
+    final level = userLevel;
+    if (level == 1) return '새내기';
+    if (level <= 3) return '연애 입문자';
+    if (level <= 5) return '연애 학습자';
+    if (level <= 7) return '연애 숙련자';
+    if (level <= 10) return '연애 마스터';
+    if (level <= 15) return '연애 전문가';
+    if (level <= 25) return '연애 멘토';
+    return '연애 구루';
+  }
+
+  int get expForNextLevel {
+    final level = userLevel;
+    if (level == 1) return 100;
+    if (level == 2) return 300;
+    if (level == 3) return 600;
+    if (level == 4) return 1000;
+    if (level == 5) return 1500;
+    if (level == 6) return 2100;
+    if (level == 7) return 2800;
+    if (level == 8) return 3600;
+    if (level == 9) return 4500;
+    if (level == 10) return 5500;
+    return (level + 1) * 1000;
+  }
+
+  int get expForCurrentLevel {
+    final level = userLevel;
+    if (level == 1) return 0;
+    if (level == 2) return 100;
+    if (level == 3) return 300;
+    if (level == 4) return 600;
+    if (level == 5) return 1000;
+    if (level == 6) return 1500;
+    if (level == 7) return 2100;
+    if (level == 8) return 2800;
+    if (level == 9) return 3600;
+    if (level == 10) return 4500;
+    return level * 1000;
+  }
+
+  double get levelProgress {
+    final currentExp = experiencePoints;
+    final currentLevelExp = expForCurrentLevel;
+    final nextLevelExp = expForNextLevel;
+    
+    if (nextLevelExp == currentLevelExp) return 1.0;
+    
+    return (currentExp - currentLevelExp) / (nextLevelExp - currentLevelExp);
+  }
+
+  String get levelProgressText {
+    final current = experiencePoints - expForCurrentLevel;
+    final needed = expForNextLevel - expForCurrentLevel;
+    return '$current / $needed';
   }
 }

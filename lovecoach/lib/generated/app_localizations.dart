@@ -311,6 +311,396 @@ abstract class AppLocalizations {
   /// In ko, this message translates to:
   /// **'안녕하세요! 저는 당신의 연애 상담사입니다. 오늘 하루 어떻게 보내셨는지 궁금해요.'**
   String get themePreviewMessage2;
+
+  /// No description provided for @appName.
+  ///
+  /// In ko, this message translates to:
+  /// **'러브코치'**
+  String get appName;
+
+  /// No description provided for @appSubtitle.
+  ///
+  /// In ko, this message translates to:
+  /// **'AI와 함께하는 연애 상담'**
+  String get appSubtitle;
+
+  /// No description provided for @forgotPassword.
+  ///
+  /// In ko, this message translates to:
+  /// **'비밀번호를 잊으셨나요?'**
+  String get forgotPassword;
+
+  /// No description provided for @forgotPasswordDescription.
+  ///
+  /// In ko, this message translates to:
+  /// **'등록하신 이메일 주소를 입력해주세요.\\n비밀번호 재설정 링크를 보내드립니다.'**
+  String get forgotPasswordDescription;
+
+  /// No description provided for @emailAddress.
+  ///
+  /// In ko, this message translates to:
+  /// **'이메일 주소'**
+  String get emailAddress;
+
+  /// No description provided for @enterEmail.
+  ///
+  /// In ko, this message translates to:
+  /// **'이메일을 입력해주세요'**
+  String get enterEmail;
+
+  /// No description provided for @enterValidEmail.
+  ///
+  /// In ko, this message translates to:
+  /// **'올바른 이메일 형식을 입력해주세요'**
+  String get enterValidEmail;
+
+  /// No description provided for @sendResetEmail.
+  ///
+  /// In ko, this message translates to:
+  /// **'비밀번호 재설정 메일 발송'**
+  String get sendResetEmail;
+
+  /// No description provided for @backToLogin.
+  ///
+  /// In ko, this message translates to:
+  /// **'로그인으로 돌아가기'**
+  String get backToLogin;
+
+  /// No description provided for @login.
+  ///
+  /// In ko, this message translates to:
+  /// **'로그인'**
+  String get login;
+
+  /// No description provided for @register.
+  ///
+  /// In ko, this message translates to:
+  /// **'회원가입'**
+  String get register;
+
+  /// No description provided for @password.
+  ///
+  /// In ko, this message translates to:
+  /// **'비밀번호'**
+  String get password;
+
+  /// No description provided for @confirmPassword.
+  ///
+  /// In ko, this message translates to:
+  /// **'비밀번호 확인'**
+  String get confirmPassword;
+
+  /// No description provided for @email.
+  ///
+  /// In ko, this message translates to:
+  /// **'이메일'**
+  String get email;
+
+  /// No description provided for @enterPassword.
+  ///
+  /// In ko, this message translates to:
+  /// **'비밀번호를 입력해주세요'**
+  String get enterPassword;
+
+  /// No description provided for @passwordMinLength.
+  ///
+  /// In ko, this message translates to:
+  /// **'비밀번호는 6자리 이상이어야 합니다'**
+  String get passwordMinLength;
+
+  /// No description provided for @signInWithGoogle.
+  ///
+  /// In ko, this message translates to:
+  /// **'Google로 로그인'**
+  String get signInWithGoogle;
+
+  /// No description provided for @testAccountLogin.
+  ///
+  /// In ko, this message translates to:
+  /// **'테스트 계정으로 바로 입장'**
+  String get testAccountLogin;
+
+  /// No description provided for @noAccount.
+  ///
+  /// In ko, this message translates to:
+  /// **'계정이 없으신가요?'**
+  String get noAccount;
+
+  /// No description provided for @signUp.
+  ///
+  /// In ko, this message translates to:
+  /// **'회원가입'**
+  String get signUp;
+
+  /// No description provided for @loginFailed.
+  ///
+  /// In ko, this message translates to:
+  /// **'로그인에 실패했습니다. 다시 시도해주세요.'**
+  String get loginFailed;
+
+  /// No description provided for @googleSignInFailed.
+  ///
+  /// In ko, this message translates to:
+  /// **'Google 로그인에 실패했습니다.'**
+  String get googleSignInFailed;
+
+  /// No description provided for @alreadyHaveAccount.
+  ///
+  /// In ko, this message translates to:
+  /// **'이미 계정이 있으신가요?'**
+  String get alreadyHaveAccount;
+
+  /// No description provided for @name.
+  ///
+  /// In ko, this message translates to:
+  /// **'이름'**
+  String get name;
+
+  /// No description provided for @enterName.
+  ///
+  /// In ko, this message translates to:
+  /// **'이름을 입력해주세요'**
+  String get enterName;
+
+  /// No description provided for @nameMinLength.
+  ///
+  /// In ko, this message translates to:
+  /// **'이름은 2자리 이상이어야 합니다'**
+  String get nameMinLength;
+
+  /// No description provided for @enterConfirmPassword.
+  ///
+  /// In ko, this message translates to:
+  /// **'비밀번호 확인을 입력해주세요'**
+  String get enterConfirmPassword;
+
+  /// No description provided for @passwordMismatch.
+  ///
+  /// In ko, this message translates to:
+  /// **'비밀번호가 일치하지 않습니다'**
+  String get passwordMismatch;
+
+  /// No description provided for @agreeToTerms.
+  ///
+  /// In ko, this message translates to:
+  /// **'서비스 이용약관에 동의합니다'**
+  String get agreeToTerms;
+
+  /// No description provided for @agreeToTermsRequired.
+  ///
+  /// In ko, this message translates to:
+  /// **'서비스 이용약관에 동의해주세요.'**
+  String get agreeToTermsRequired;
+
+  /// No description provided for @signUpFailed.
+  ///
+  /// In ko, this message translates to:
+  /// **'회원가입에 실패했습니다. 다시 시도해주세요.'**
+  String get signUpFailed;
+
+  /// No description provided for @user.
+  ///
+  /// In ko, this message translates to:
+  /// **'사용자'**
+  String get user;
+
+  /// No description provided for @premium.
+  ///
+  /// In ko, this message translates to:
+  /// **'프리미엄'**
+  String get premium;
+
+  /// No description provided for @freePlan.
+  ///
+  /// In ko, this message translates to:
+  /// **'무료 플랜'**
+  String get freePlan;
+
+  /// No description provided for @aiModelSettings.
+  ///
+  /// In ko, this message translates to:
+  /// **'AI 모델 설정'**
+  String get aiModelSettings;
+
+  /// No description provided for @current.
+  ///
+  /// In ko, this message translates to:
+  /// **'현재'**
+  String get current;
+
+  /// No description provided for @notificationSettings.
+  ///
+  /// In ko, this message translates to:
+  /// **'알림 설정'**
+  String get notificationSettings;
+
+  /// No description provided for @chatHistoryManagement.
+  ///
+  /// In ko, this message translates to:
+  /// **'채팅 기록 관리'**
+  String get chatHistoryManagement;
+
+  /// No description provided for @accountAndSecurity.
+  ///
+  /// In ko, this message translates to:
+  /// **'계정 및 보안'**
+  String get accountAndSecurity;
+
+  /// No description provided for @changePassword.
+  ///
+  /// In ko, this message translates to:
+  /// **'비밀번호 변경'**
+  String get changePassword;
+
+  /// No description provided for @securitySettings.
+  ///
+  /// In ko, this message translates to:
+  /// **'보안 설정'**
+  String get securitySettings;
+
+  /// No description provided for @appSettings.
+  ///
+  /// In ko, this message translates to:
+  /// **'앱 설정'**
+  String get appSettings;
+
+  /// No description provided for @themeSettings.
+  ///
+  /// In ko, this message translates to:
+  /// **'테마 설정'**
+  String get themeSettings;
+
+  /// No description provided for @storageManagement.
+  ///
+  /// In ko, this message translates to:
+  /// **'저장소 관리'**
+  String get storageManagement;
+
+  /// No description provided for @supportAndInfo.
+  ///
+  /// In ko, this message translates to:
+  /// **'지원 및 정보'**
+  String get supportAndInfo;
+
+  /// No description provided for @customerSupport.
+  ///
+  /// In ko, this message translates to:
+  /// **'고객센터'**
+  String get customerSupport;
+
+  /// No description provided for @logout.
+  ///
+  /// In ko, this message translates to:
+  /// **'로그아웃'**
+  String get logout;
+
+  /// No description provided for @confirmLogout.
+  ///
+  /// In ko, this message translates to:
+  /// **'정말 로그아웃 하시겠습니까?'**
+  String get confirmLogout;
+
+  /// No description provided for @cancel.
+  ///
+  /// In ko, this message translates to:
+  /// **'취소'**
+  String get cancel;
+
+  /// No description provided for @subscriptionStatus.
+  ///
+  /// In ko, this message translates to:
+  /// **'구독 상태'**
+  String get subscriptionStatus;
+
+  /// No description provided for @premiumSubscribed.
+  ///
+  /// In ko, this message translates to:
+  /// **'프리미엄 구독중'**
+  String get premiumSubscribed;
+
+  /// No description provided for @upgrade.
+  ///
+  /// In ko, this message translates to:
+  /// **'업그레이드'**
+  String get upgrade;
+
+  /// No description provided for @freeConsultationStatus.
+  ///
+  /// In ko, this message translates to:
+  /// **'무료 상담 현황'**
+  String get freeConsultationStatus;
+
+  /// No description provided for @surveyResults.
+  ///
+  /// In ko, this message translates to:
+  /// **'설문조사 결과'**
+  String get surveyResults;
+
+  /// No description provided for @takeSurvey.
+  ///
+  /// In ko, this message translates to:
+  /// **'설문조사 하기'**
+  String get takeSurvey;
+
+  /// No description provided for @completed.
+  ///
+  /// In ko, this message translates to:
+  /// **'완료'**
+  String get completed;
+
+  /// No description provided for @incomplete.
+  ///
+  /// In ko, this message translates to:
+  /// **'미완료'**
+  String get incomplete;
+
+  /// No description provided for @aiSettings.
+  ///
+  /// In ko, this message translates to:
+  /// **'AI 설정'**
+  String get aiSettings;
+
+  /// No description provided for @support.
+  ///
+  /// In ko, this message translates to:
+  /// **'고객지원'**
+  String get support;
+
+  /// No description provided for @faq.
+  ///
+  /// In ko, this message translates to:
+  /// **'자주 묻는 질문'**
+  String get faq;
+
+  /// No description provided for @oneToOneInquiry.
+  ///
+  /// In ko, this message translates to:
+  /// **'1:1 문의하기'**
+  String get oneToOneInquiry;
+
+  /// No description provided for @inquiryContent.
+  ///
+  /// In ko, this message translates to:
+  /// **'문의 내용'**
+  String get inquiryContent;
+
+  /// No description provided for @inquire.
+  ///
+  /// In ko, this message translates to:
+  /// **'문의하기'**
+  String get inquire;
+
+  /// No description provided for @contactInfo.
+  ///
+  /// In ko, this message translates to:
+  /// **'연락처 정보'**
+  String get contactInfo;
+
+  /// No description provided for @responseTime.
+  ///
+  /// In ko, this message translates to:
+  /// **'응답 시간'**
+  String get responseTime;
 }
 
 class _AppLocalizationsDelegate

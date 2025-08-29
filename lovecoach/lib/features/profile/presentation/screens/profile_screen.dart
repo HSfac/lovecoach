@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
+import '../../../../generated/app_localizations.dart';
 import '../../../../shared/providers/auth_provider.dart';
 import '../../../../shared/providers/ai_model_provider.dart';
 import '../../../../core/theme/app_theme.dart';
@@ -16,7 +17,7 @@ class ProfileScreen extends ConsumerWidget {
 
     return Scaffold(
       appBar: AppBar(
-        title: const Text('프로필'),
+        title: Text(AppLocalizations.of(context)!.profile),
         leading: IconButton(
           icon: const Icon(Icons.arrow_back),
           onPressed: () => context.pop(),
@@ -58,7 +59,7 @@ class ProfileScreen extends ConsumerWidget {
                           ),
                           const SizedBox(height: 16),
                           Text(
-                            userData.displayName ?? '사용자',
+                            userData.displayName ?? AppLocalizations.of(context)!.defaultUserName,
                             style: const TextStyle(
                               fontSize: 20,
                               fontWeight: FontWeight.bold,
@@ -76,18 +77,23 @@ class ProfileScreen extends ConsumerWidget {
                       ),
                     ),
                     
-                    const SizedBox(height: 32),
+                    const SizedBox(height: 24),
+                    
+                    // 사용자 레벨 카드
+                    _buildUserLevelCard(userData),
+                    
+                    const SizedBox(height: 24),
                     
                     // 구독 상태
                     _ProfileItem(
                       icon: Icons.star,
-                      title: '구독 상태',
-                      subtitle: userData.isSubscribed ? '프리미엄 구독중' : '무료 플랜',
+                      title: AppLocalizations.of(context)!.subscriptionStatus,
+                      subtitle: userData.isSubscribed ? AppLocalizations.of(context)!.premiumSubscribed : AppLocalizations.of(context)!.freePlan,
                       trailing: userData.isSubscribed 
                           ? const Icon(Icons.check_circle, color: Colors.green)
                           : TextButton(
                               onPressed: () => context.push('/subscription'),
-                              child: const Text('업그레이드'),
+                              child: Text(AppLocalizations.of(context)!.upgrade),
                             ),
                     ),
                     
@@ -97,7 +103,7 @@ class ProfileScreen extends ConsumerWidget {
                     if (!userData.isSubscribed) ...[
                       _ProfileItem(
                         icon: Icons.chat_bubble_outline,
-                        title: '무료 상담 현황',
+                        title: AppLocalizations.of(context)!.freeConsultationStatus,
                         subtitle: userData.consultationStatusMessage,
                         trailing: Text(
                           '${userData.dailyConsultationsUsed}/${userData.dailyConsultationsLimit}',
@@ -113,7 +119,7 @@ class ProfileScreen extends ConsumerWidget {
                     // 설문조사 상태
                     _ProfileItem(
                       icon: Icons.assignment_outlined,
-                      title: userData.hasCompletedSurvey ? '설문조사 결과' : '설문조사 하기',
+                      title: userData.hasCompletedSurvey ? AppLocalizations.of(context)!.surveyResults : AppLocalizations.of(context)!.takeSurvey,
                       subtitle: userData.hasCompletedSurvey 
                           ? '맞춤형 상담을 위한 설문조사 완료'
                           : '맞춤형 상담을 위한 설문조사',
@@ -132,7 +138,7 @@ class ProfileScreen extends ConsumerWidget {
                               borderRadius: BorderRadius.circular(12),
                             ),
                             child: Text(
-                              userData.hasCompletedSurvey ? '완료' : '미완료',
+                              userData.hasCompletedSurvey ? AppLocalizations.of(context)!.completed : AppLocalizations.of(context)!.incomplete,
                               style: TextStyle(
                                 fontSize: 12,
                                 color: userData.hasCompletedSurvey 
@@ -159,8 +165,8 @@ class ProfileScreen extends ConsumerWidget {
                     // AI 설정 메뉴
                     _ProfileItem(
                       icon: Icons.psychology,
-                      title: 'AI 설정',
-                      subtitle: '현재: ${selectedAI.displayName}',
+                      title: AppLocalizations.of(context)!.aiSettings,
+                      subtitle: '${AppLocalizations.of(context)!.current}: ${selectedAI.displayName}',
                       trailing: Row(
                         mainAxisSize: MainAxisSize.min,
                         children: [
@@ -177,7 +183,7 @@ class ProfileScreen extends ConsumerWidget {
                     // 메인 설정 메뉴
                     _ProfileItem(
                       icon: Icons.settings,
-                      title: '설정',
+                      title: AppLocalizations.of(context)!.settings,
                       subtitle: '알림, 테마, 개인정보 등 모든 설정',
                       onTap: () => context.push('/settings'),
                     ),
@@ -187,7 +193,7 @@ class ProfileScreen extends ConsumerWidget {
                     // 설정 메뉴
                     _ProfileItem(
                       icon: Icons.help_outline,
-                      title: '고객센터',
+                      title: AppLocalizations.of(context)!.support,
                       subtitle: '문의사항이 있으시면 연락주세요',
                       onTap: () => context.push('/support'),
                     ),
@@ -226,9 +232,9 @@ class ProfileScreen extends ConsumerWidget {
                           }
                         },
                         icon: const Icon(Icons.logout, color: Colors.red),
-                        label: const Text(
-                          '로그아웃',
-                          style: TextStyle(color: Colors.red),
+                        label: Text(
+                          AppLocalizations.of(context)!.logout,
+                          style: const TextStyle(color: Colors.red),
                         ),
                         style: OutlinedButton.styleFrom(
                           side: const BorderSide(color: Colors.red),
@@ -316,7 +322,7 @@ class ProfileScreen extends ConsumerWidget {
             ),
             ListTile(
               leading: Icon(Icons.lock_reset, color: AppTheme.primaryColor),
-              title: const Text('비밀번호 변경'),
+              title: Text(AppLocalizations.of(context)!.changePassword),
               subtitle: const Text('비밀번호 재설정 메일을 발송합니다'),
               onTap: () {
                 Navigator.pop(context);
@@ -402,7 +408,7 @@ class ProfileScreen extends ConsumerWidget {
         actions: [
           TextButton(
             onPressed: () => Navigator.of(context).pop(),
-            child: const Text('취소'),
+            child: Text(AppLocalizations.of(context)!.cancel),
           ),
           ElevatedButton(
             onPressed: () async {
@@ -473,7 +479,7 @@ class ProfileScreen extends ConsumerWidget {
           children: [
             Icon(Icons.assignment, color: AppTheme.primaryColor),
             const SizedBox(width: 12),
-            const Text('설문조사 결과'),
+            Text(AppLocalizations.of(context)!.surveyResults),
           ],
         ),
         content: SingleChildScrollView(
@@ -560,6 +566,211 @@ class ProfileScreen extends ConsumerWidget {
 
   String _formatDateTime(DateTime dateTime) {
     return '${dateTime.year}년 ${dateTime.month}월 ${dateTime.day}일';
+  }
+
+  Widget _buildUserLevelCard(userData) {
+    return Container(
+      padding: const EdgeInsets.all(20),
+      decoration: BoxDecoration(
+        gradient: LinearGradient(
+          begin: Alignment.topLeft,
+          end: Alignment.bottomRight,
+          colors: [
+            AppTheme.primaryColor.withOpacity(0.1),
+            AppTheme.accentColor.withOpacity(0.1),
+          ],
+        ),
+        borderRadius: BorderRadius.circular(16),
+        border: Border.all(
+          color: AppTheme.primaryColor.withOpacity(0.2),
+          width: 1,
+        ),
+      ),
+      child: Column(
+        children: [
+          Row(
+            children: [
+              Container(
+                padding: const EdgeInsets.all(12),
+                decoration: BoxDecoration(
+                  gradient: LinearGradient(
+                    colors: [AppTheme.primaryColor, AppTheme.accentColor],
+                  ),
+                  borderRadius: BorderRadius.circular(12),
+                  boxShadow: [
+                    BoxShadow(
+                      color: AppTheme.primaryColor.withOpacity(0.3),
+                      blurRadius: 8,
+                      offset: const Offset(0, 2),
+                    ),
+                  ],
+                ),
+                child: Icon(
+                  _getLevelIcon(userData.userLevel),
+                  color: Colors.white,
+                  size: 24,
+                ),
+              ),
+              const SizedBox(width: 16),
+              Expanded(
+                child: Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
+                    Row(
+                      children: [
+                        Text(
+                          'Lv.${userData.userLevel}',
+                          style: const TextStyle(
+                            fontSize: 20,
+                            fontWeight: FontWeight.bold,
+                            color: AppTheme.textPrimary,
+                          ),
+                        ),
+                        const SizedBox(width: 8),
+                        Container(
+                          padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 4),
+                          decoration: BoxDecoration(
+                            color: AppTheme.primaryColor.withOpacity(0.2),
+                            borderRadius: BorderRadius.circular(12),
+                          ),
+                          child: Text(
+                            userData.userRank,
+                            style: TextStyle(
+                              fontSize: 12,
+                              fontWeight: FontWeight.bold,
+                              color: AppTheme.primaryColor,
+                            ),
+                          ),
+                        ),
+                      ],
+                    ),
+                    const SizedBox(height: 4),
+                    Text(
+                      '${userData.experiencePoints} EXP',
+                      style: const TextStyle(
+                        fontSize: 14,
+                        color: AppTheme.textSecondary,
+                      ),
+                    ),
+                  ],
+                ),
+              ),
+            ],
+          ),
+          const SizedBox(height: 16),
+          
+          // 경험치 바
+          Column(
+            children: [
+              Row(
+                mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                children: [
+                  const Text(
+                    '다음 레벨까지',
+                    style: TextStyle(
+                      fontSize: 12,
+                      color: AppTheme.textHint,
+                    ),
+                  ),
+                  Text(
+                    userData.levelProgressText,
+                    style: const TextStyle(
+                      fontSize: 12,
+                      fontWeight: FontWeight.bold,
+                      color: AppTheme.textSecondary,
+                    ),
+                  ),
+                ],
+              ),
+              const SizedBox(height: 8),
+              LinearProgressIndicator(
+                value: userData.levelProgress,
+                backgroundColor: Colors.grey[300],
+                valueColor: AlwaysStoppedAnimation<Color>(
+                  AppTheme.primaryColor,
+                ),
+                minHeight: 6,
+              ),
+            ],
+          ),
+          
+          const SizedBox(height: 16),
+          
+          // 통계 정보
+          Row(
+            children: [
+              Expanded(
+                child: _buildStatItem(
+                  '총 상담',
+                  '${userData.totalConsultations}회',
+                  Icons.chat_bubble_outline,
+                ),
+              ),
+              Container(
+                width: 1,
+                height: 40,
+                color: Colors.grey[300],
+              ),
+              Expanded(
+                child: _buildStatItem(
+                  '연속 접속',
+                  '${userData.currentStreak}일',
+                  Icons.local_fire_department,
+                ),
+              ),
+              Container(
+                width: 1,
+                height: 40,
+                color: Colors.grey[300],
+              ),
+              Expanded(
+                child: _buildStatItem(
+                  '활동 일수',
+                  '${userData.consecutiveDays}일',
+                  Icons.calendar_today,
+                ),
+              ),
+            ],
+          ),
+        ],
+      ),
+    );
+  }
+
+  Widget _buildStatItem(String label, String value, IconData icon) {
+    return Column(
+      children: [
+        Icon(
+          icon,
+          size: 20,
+          color: AppTheme.accentColor,
+        ),
+        const SizedBox(height: 4),
+        Text(
+          value,
+          style: const TextStyle(
+            fontSize: 14,
+            fontWeight: FontWeight.bold,
+            color: AppTheme.textPrimary,
+          ),
+        ),
+        Text(
+          label,
+          style: const TextStyle(
+            fontSize: 10,
+            color: AppTheme.textHint,
+          ),
+        ),
+      ],
+    );
+  }
+
+  IconData _getLevelIcon(int level) {
+    if (level <= 3) return Icons.emoji_events;
+    if (level <= 7) return Icons.military_tech;
+    if (level <= 15) return Icons.diamond;
+    if (level <= 25) return Icons.auto_awesome;
+    return Icons.emoji_objects;
   }
 }
 

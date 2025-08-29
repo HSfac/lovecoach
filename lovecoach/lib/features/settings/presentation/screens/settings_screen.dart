@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
+import '../../../../generated/app_localizations.dart';
 import '../../../../core/theme/app_theme.dart';
 import '../../../../shared/providers/auth_provider.dart';
 import '../../../../shared/providers/ai_model_provider.dart';
@@ -48,20 +49,20 @@ class SettingsScreen extends ConsumerWidget {
                       _buildSettingsCard([
                         _SettingItem(
                           icon: Icons.psychology,
-                          title: 'AI 모델 설정',
-                          subtitle: '현재: ${selectedAI.displayName}',
+                          title: AppLocalizations.of(context)!.aiModelSettings,
+                          subtitle: '${AppLocalizations.of(context)!.current}: ${selectedAI.displayName}',
                           trailing: Text(selectedAI.icon, style: const TextStyle(fontSize: 16)),
                           onTap: () => context.push('/ai-settings'),
                         ),
                         _SettingItem(
                           icon: Icons.notifications_outlined,
-                          title: '알림 설정',
+                          title: AppLocalizations.of(context)!.notificationSettings,
                           subtitle: '푸시 알림, 이메일 알림 관리',
                           onTap: () => context.push('/notification-settings'),
                         ),
                         _SettingItem(
                           icon: Icons.history,
-                          title: '채팅 기록 관리',
+                          title: AppLocalizations.of(context)!.chatHistoryManagement,
                           subtitle: '대화 내용 백업 및 삭제',
                           onTap: () => context.push('/chat-history'),
                         ),
@@ -70,17 +71,17 @@ class SettingsScreen extends ConsumerWidget {
                       const SizedBox(height: 24),
                       
                       // 계정 및 보안 섹션
-                      _buildSectionHeader('계정 및 보안'),
+                      _buildSectionHeader(AppLocalizations.of(context)!.accountAndSecurity),
                       _buildSettingsCard([
                         _SettingItem(
                           icon: Icons.lock_reset,
-                          title: '비밀번호 변경',
+                          title: AppLocalizations.of(context)!.changePassword,
                           subtitle: '새로운 비밀번호로 변경하기',
                           onTap: () => _sendPasswordReset(context, ref),
                         ),
                         _SettingItem(
                           icon: Icons.security,
-                          title: '보안 설정',
+                          title: AppLocalizations.of(context)!.securitySettings,
                           subtitle: '계정 보안 관리',
                           onTap: () => context.push('/security-settings'),
                         ),
@@ -89,23 +90,23 @@ class SettingsScreen extends ConsumerWidget {
                       const SizedBox(height: 24),
                       
                       // 앱 설정 섹션
-                      _buildSectionHeader('앱 설정'),
+                      _buildSectionHeader(AppLocalizations.of(context)!.appSettings),
                       _buildSettingsCard([
                         _SettingItem(
                           icon: Icons.palette_outlined,
-                          title: '테마 설정',
+                          title: AppLocalizations.of(context)!.themeSettings,
                           subtitle: '다크모드, 폰트 크기',
                           onTap: () => context.push('/theme-settings'),
                         ),
                         _SettingItem(
                           icon: Icons.language,
-                          title: '언어 설정',
-                          subtitle: '한국어',
+                          title: AppLocalizations.of(context)!.languageSettings,
+                          subtitle: AppLocalizations.of(context)!.korean,
                           onTap: () => context.push('/language-settings'),
                         ),
                         _SettingItem(
                           icon: Icons.storage,
-                          title: '저장소 관리',
+                          title: AppLocalizations.of(context)!.storageManagement,
                           subtitle: '캐시 삭제, 데이터 사용량',
                           onTap: () => context.push('/storage-settings'),
                         ),
@@ -114,11 +115,11 @@ class SettingsScreen extends ConsumerWidget {
                       const SizedBox(height: 24),
                       
                       // 지원 및 정보 섹션
-                      _buildSectionHeader('지원 및 정보'),
+                      _buildSectionHeader(AppLocalizations.of(context)!.supportAndInfo),
                       _buildSettingsCard([
                         _SettingItem(
                           icon: Icons.help_outline,
-                          title: '고객센터',
+                          title: AppLocalizations.of(context)!.customerSupport,
                           subtitle: 'FAQ, 문의하기',
                           onTap: () => context.push('/support'),
                         ),
@@ -156,9 +157,9 @@ class SettingsScreen extends ConsumerWidget {
                         child: OutlinedButton.icon(
                           onPressed: () => _showLogoutDialog(context, ref),
                           icon: const Icon(Icons.logout, color: Colors.red),
-                          label: const Text(
-                            '로그아웃',
-                            style: TextStyle(
+                          label: Text(
+                            AppLocalizations.of(context)!.logout,
+                            style: const TextStyle(
                               color: Colors.red,
                               fontWeight: FontWeight.w600,
                             ),
@@ -196,9 +197,9 @@ class SettingsScreen extends ConsumerWidget {
             ),
           ),
           const SizedBox(width: 8),
-          const Text(
-            '설정',
-            style: TextStyle(
+          Text(
+            AppLocalizations.of(context)!.settings,
+            style: const TextStyle(
               fontSize: 24,
               fontWeight: FontWeight.bold,
               color: AppTheme.textPrimary,
@@ -266,7 +267,7 @@ class SettingsScreen extends ConsumerWidget {
                       crossAxisAlignment: CrossAxisAlignment.start,
                       children: [
                         Text(
-                          userData.displayName ?? '사용자',
+                          userData.displayName ?? AppLocalizations.of(context)!.defaultUserName,
                           style: const TextStyle(
                             fontSize: 18,
                             fontWeight: FontWeight.bold,
@@ -289,7 +290,7 @@ class SettingsScreen extends ConsumerWidget {
                             borderRadius: BorderRadius.circular(10),
                           ),
                           child: Text(
-                            userData.isSubscribed ? '프리미엄' : '무료 플랜',
+                            userData.isSubscribed ? AppLocalizations.of(context)!.premium : AppLocalizations.of(context)!.freePlan,
                             style: const TextStyle(
                               color: Colors.white,
                               fontSize: 12,
@@ -408,12 +409,12 @@ class SettingsScreen extends ConsumerWidget {
     showDialog(
       context: context,
       builder: (context) => AlertDialog(
-        title: const Text('로그아웃'),
-        content: const Text('정말 로그아웃 하시겠습니까?'),
+        title: Text(AppLocalizations.of(context)!.logout),
+        content: Text(AppLocalizations.of(context)!.confirmLogout),
         actions: [
           TextButton(
             onPressed: () => Navigator.of(context).pop(),
-            child: const Text('취소'),
+            child: Text(AppLocalizations.of(context)!.cancel),
           ),
           ElevatedButton(
             onPressed: () async {
@@ -424,7 +425,7 @@ class SettingsScreen extends ConsumerWidget {
               }
             },
             style: ElevatedButton.styleFrom(backgroundColor: Colors.red),
-            child: const Text('로그아웃', style: TextStyle(color: Colors.white)),
+            child: Text(AppLocalizations.of(context)!.logout, style: const TextStyle(color: Colors.white)),
           ),
         ],
       ),

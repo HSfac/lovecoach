@@ -3,6 +3,7 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
 import '../../../../core/theme/app_theme.dart';
 import '../../../../shared/providers/auth_provider.dart';
+import '../../../../generated/app_localizations.dart';
 
 // 전역 상태로 네비게이션 완료 여부 관리
 bool _globalHasNavigated = false;
@@ -160,8 +161,8 @@ class _SplashScreenState extends ConsumerState<SplashScreen>
               ),
             ),
             const SizedBox(height: 32),
-            const Text(
-              '러브코치',
+            Text(
+              AppLocalizations.of(context)!.appName,
               style: TextStyle(
                 fontSize: 36,
                 fontWeight: FontWeight.bold,
@@ -171,7 +172,7 @@ class _SplashScreenState extends ConsumerState<SplashScreen>
             ),
             const SizedBox(height: 8),
             Text(
-              'AI와 함께하는 연애 상담',
+              AppLocalizations.of(context)!.appSubtitle,
               style: TextStyle(
                 fontSize: 16,
                 color: Colors.grey[600],

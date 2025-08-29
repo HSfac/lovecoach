@@ -217,15 +217,58 @@ class ChatNotifier extends StateNotifier<AsyncValue<List<ChatMessage>>> {
       // Firestore에 AI 응답 저장
       await _firestore.collection('chats').add(aiMessage.toFirestore());
 
-      // 무료 사용자의 경우 사용 횟수 업데이트
-      if (!currentUser.isSubscribed) {
-        final now = DateTime.now();
-        final authService = ref.read(authServiceProvider);
+      // 경험치 및 레벨 업데이트
+      final now = DateTime.now();
+      final authService = ref.read(authServiceProvider);
+      
+      // 경험치 계산 (상담 1회당 15~25 경험치, 연속 접속시 보너스)
+      int expGain = 20; // 기본 경험치
+      
+      // 연속 접속일 계산
+      final today = DateTime(now.year, now.month, now.day);
+      final lastActiveDate = currentUser.lastActiveDate;
+      int newStreak = currentUser.currentStreak;
+      int newConsecutiveDays = currentUser.consecutiveDays;
+      
+      if (lastActiveDate != null) {
+        final lastActiveDay = DateTime(
+          lastActiveDate.year, 
+          lastActiveDate.month, 
+          lastActiveDate.day
+        );
+        final daysDiff = today.difference(lastActiveDay).inDays;
         
-        // 오늘이 새로운 날인지 확인 (날짜가 바뀌었다면 dailyConsultationsUsed 리셋)
-        final today = DateTime(now.year, now.month, now.day);
+        if (daysDiff == 1) {
+          // 연속 접속
+          newStreak += 1;
+          expGain += 5; // 연속 접속 보너스
+        } else if (daysDiff > 1) {
+          // 연속 접속 끊김
+          newStreak = 1;
+        }
+        // daysDiff == 0이면 오늘 이미 접속한 것이므로 변화 없음
+        
+        if (daysDiff >= 1) {
+          newConsecutiveDays += 1;
+        }
+      } else {
+        // 첫 접속
+        newStreak = 1;
+        newConsecutiveDays = 1;
+      }
+      
+      // 연속 접속 보너스 (7일마다 추가 보너스)
+      if (newStreak % 7 == 0) {
+        expGain += 30;
+      }
+      
+      final previousLevel = currentUser.userLevel;
+      final newExperiencePoints = currentUser.experiencePoints + expGain;
+      
+      // 무료 사용자의 경우 사용 횟수 업데이트
+      int newDailyUsed = currentUser.dailyConsultationsUsed;
+      if (!currentUser.isSubscribed) {
         final lastDate = currentUser.lastConsultationDate;
-        int newDailyUsed = currentUser.dailyConsultationsUsed;
         
         if (lastDate == null) {
           newDailyUsed = 1; // 첫 사용
@@ -237,14 +280,27 @@ class ChatNotifier extends StateNotifier<AsyncValue<List<ChatMessage>>> {
             newDailyUsed = 1; // 새로운 날 첫 사용
           }
         }
-        
-        await authService.updateUser(
-          currentUser.copyWith(
-            freeConsultationsUsed: currentUser.freeConsultationsUsed + 1,
-            lastConsultationDate: now,
-            dailyConsultationsUsed: newDailyUsed,
-          ),
-        );
+      }
+      
+      final updatedUser = currentUser.copyWith(
+        freeConsultationsUsed: !currentUser.isSubscribed 
+            ? currentUser.freeConsultationsUsed + 1
+            : currentUser.freeConsultationsUsed,
+        lastConsultationDate: now,
+        dailyConsultationsUsed: newDailyUsed,
+        totalConsultations: currentUser.totalConsultations + 1,
+        consecutiveDays: newConsecutiveDays,
+        currentStreak: newStreak,
+        lastActiveDate: now,
+        experiencePoints: newExperiencePoints,
+      );
+      
+      await authService.updateUser(updatedUser);
+      
+      // 레벨업 확인 및 알림
+      final newLevel = updatedUser.userLevel;
+      if (newLevel > previousLevel) {
+        _showLevelUpNotification(newLevel, updatedUser.userRank);
       }
 
     } catch (e, stackTrace) {
@@ -291,5 +347,26 @@ class ChatNotifier extends StateNotifier<AsyncValue<List<ChatMessage>>> {
     } catch (e, stackTrace) {
       state = AsyncValue.error(e, stackTrace);
     }
+  }
+
+  void _showLevelUpNotification(int newLevel, String newRank) {
+    // 레벨업 축하 메시지를 채팅에 추가
+    final levelUpMessage = ChatMessage(
+      id: DateTime.now().millisecondsSinceEpoch.toString() + '_levelup',
+      content: '''🎉 축하합니다! 레벨업! 🎉
+
+🆙 **Lv.$newLevel $newRank** 달성!
+
+연애 상담을 통해 성장하고 계시네요! 더욱 정확하고 개인화된 조언을 받으실 수 있게 되었습니다.
+
+계속해서 좋은 대화를 나누어봐요! ✨''',
+      type: MessageType.ai,
+      timestamp: DateTime.now(),
+      category: category,
+      userId: 'system',
+      sessionId: _currentSessionId ?? _generateSessionId(),
+    );
+
+    state = state.whenData((messages) => [...messages, levelUpMessage]);
   }
 }

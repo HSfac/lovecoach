@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
+import 'package:flutter_gen/gen_l10n/app_localizations.dart';
 import '../../../../core/theme/app_theme.dart';
 import '../../../../shared/providers/auth_provider.dart';
 import '../../../../shared/widgets/custom_button.dart';
@@ -37,8 +38,8 @@ class _LoginScreenState extends ConsumerState<LoginScreen> {
       context.go('/category');
     } else if (mounted) {
       ScaffoldMessenger.of(context).showSnackBar(
-        const SnackBar(
-          content: Text('로그인에 실패했습니다. 다시 시도해주세요.'),
+        SnackBar(
+          content: Text(AppLocalizations.of(context)!.loginFailed),
           backgroundColor: Colors.red,
         ),
       );
@@ -52,8 +53,8 @@ class _LoginScreenState extends ConsumerState<LoginScreen> {
       context.go('/category');
     } else if (mounted) {
       ScaffoldMessenger.of(context).showSnackBar(
-        const SnackBar(
-          content: Text('Google 로그인에 실패했습니다.'),
+        SnackBar(
+          content: Text(AppLocalizations.of(context)!.googleSignInFailed),
           backgroundColor: Colors.red,
         ),
       );
@@ -66,15 +67,15 @@ class _LoginScreenState extends ConsumerState<LoginScreen> {
     if (success && mounted) {
       context.go('/category');
       ScaffoldMessenger.of(context).showSnackBar(
-        const SnackBar(
-          content: Text('테스트 계정으로 로그인되었습니다.'),
+        SnackBar(
+          content: Text(AppLocalizations.of(context)!.testAccountSuccess),
           backgroundColor: Colors.green,
         ),
       );
     } else if (mounted) {
       ScaffoldMessenger.of(context).showSnackBar(
-        const SnackBar(
-          content: Text('테스트 계정 생성에 실패했습니다.'),
+        SnackBar(
+          content: Text(AppLocalizations.of(context)!.testAccountFailed),
           backgroundColor: Colors.red,
         ),
       );
@@ -117,16 +118,16 @@ class _LoginScreenState extends ConsumerState<LoginScreen> {
                         ),
                       ),
                       const SizedBox(height: 24),
-                      const Text(
-                        '러브코치',
-                        style: TextStyle(
+                      Text(
+                        AppLocalizations.of(context)!.appName,
+                        style: const TextStyle(
                           fontSize: 32,
                           fontWeight: FontWeight.bold,
                         ),
                       ),
                       const SizedBox(height: 8),
                       Text(
-                        'AI와 함께하는 연애 상담',
+                        AppLocalizations.of(context)!.appSubtitle,
                         style: TextStyle(
                           fontSize: 16,
                           color: Colors.grey[600],
@@ -141,14 +142,14 @@ class _LoginScreenState extends ConsumerState<LoginScreen> {
                 // 이메일 입력
                 CustomTextField(
                   controller: _emailController,
-                  labelText: '이메일',
+                  labelText: AppLocalizations.of(context)!.email,
                   keyboardType: TextInputType.emailAddress,
                   validator: (value) {
                     if (value == null || value.isEmpty) {
-                      return '이메일을 입력해주세요';
+                      return AppLocalizations.of(context)!.enterEmail;
                     }
                     if (!value.contains('@')) {
-                      return '올바른 이메일 형식을 입력해주세요';
+                      return AppLocalizations.of(context)!.enterValidEmail;
                     }
                     return null;
                   },
@@ -159,7 +160,7 @@ class _LoginScreenState extends ConsumerState<LoginScreen> {
                 // 비밀번호 입력
                 CustomTextField(
                   controller: _passwordController,
-                  labelText: '비밀번호',
+                  labelText: AppLocalizations.of(context)!.password,
                   obscureText: _obscurePassword,
                   suffixIcon: IconButton(
                     icon: Icon(
@@ -173,10 +174,10 @@ class _LoginScreenState extends ConsumerState<LoginScreen> {
                   ),
                   validator: (value) {
                     if (value == null || value.isEmpty) {
-                      return '비밀번호를 입력해주세요';
+                      return AppLocalizations.of(context)!.enterPassword;
                     }
                     if (value.length < 6) {
-                      return '비밀번호는 6자리 이상이어야 합니다';
+                      return AppLocalizations.of(context)!.passwordMinLength;
                     }
                     return null;
                   },
@@ -186,7 +187,7 @@ class _LoginScreenState extends ConsumerState<LoginScreen> {
                 
                 // 로그인 버튼
                 CustomButton(
-                  text: '로그인',
+                  text: AppLocalizations.of(context)!.login,
                   onPressed: authState.isLoading ? null : _signIn,
                   isLoading: authState.isLoading,
                 ),
@@ -198,9 +199,9 @@ class _LoginScreenState extends ConsumerState<LoginScreen> {
                   alignment: Alignment.centerRight,
                   child: TextButton(
                     onPressed: () => context.push('/forgot-password'),
-                    child: const Text(
-                      '비밀번호를 잊으셨나요?',
-                      style: TextStyle(
+                    child: Text(
+                      AppLocalizations.of(context)!.forgotPassword,
+                      style: const TextStyle(
                         color: AppTheme.primaryColor,
                         fontSize: 14,
                       ),
@@ -214,7 +215,7 @@ class _LoginScreenState extends ConsumerState<LoginScreen> {
                 OutlinedButton.icon(
                   onPressed: authState.isLoading ? null : _signInWithGoogle,
                   icon: const Icon(Icons.login),
-                  label: const Text('Google로 로그인'),
+                  label: Text(AppLocalizations.of(context)!.signInWithGoogle),
                   style: OutlinedButton.styleFrom(
                     padding: const EdgeInsets.symmetric(vertical: 16),
                     shape: RoundedRectangleBorder(
@@ -229,7 +230,7 @@ class _LoginScreenState extends ConsumerState<LoginScreen> {
                 OutlinedButton.icon(
                   onPressed: authState.isLoading ? null : _createTestAccount,
                   icon: const Icon(Icons.bug_report),
-                  label: const Text('테스트 계정으로 바로 입장'),
+                  label: Text(AppLocalizations.of(context)!.testAccountLogin),
                   style: OutlinedButton.styleFrom(
                     padding: const EdgeInsets.symmetric(vertical: 16),
                     shape: RoundedRectangleBorder(
@@ -246,10 +247,10 @@ class _LoginScreenState extends ConsumerState<LoginScreen> {
                 Row(
                   mainAxisAlignment: MainAxisAlignment.center,
                   children: [
-                    const Text('계정이 없으신가요? '),
+                    Text('${AppLocalizations.of(context)!.noAccount} '),
                     TextButton(
                       onPressed: () => context.go('/register'),
-                      child: const Text('회원가입'),
+                      child: Text(AppLocalizations.of(context)!.signUp),
                     ),
                   ],
                 ),

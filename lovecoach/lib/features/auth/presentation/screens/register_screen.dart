@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
+import '../../../../generated/app_localizations.dart';
 import '../../../../shared/providers/auth_provider.dart';
 import '../../../../shared/widgets/custom_button.dart';
 import '../../../../shared/widgets/custom_text_field.dart';
@@ -35,8 +36,8 @@ class _RegisterScreenState extends ConsumerState<RegisterScreen> {
     if (!_formKey.currentState!.validate()) return;
     if (!_agreeToTerms) {
       ScaffoldMessenger.of(context).showSnackBar(
-        const SnackBar(
-          content: Text('서비스 이용약관에 동의해주세요.'),
+        SnackBar(
+          content: Text(AppLocalizations.of(context)!.agreeToTermsRequired),
           backgroundColor: Colors.red,
         ),
       );
@@ -56,8 +57,8 @@ class _RegisterScreenState extends ConsumerState<RegisterScreen> {
       context.go('/email-verification?email=${Uri.encodeComponent(_emailController.text)}');
     } else if (mounted) {
       ScaffoldMessenger.of(context).showSnackBar(
-        const SnackBar(
-          content: Text('회원가입에 실패했습니다. 다시 시도해주세요.'),
+        SnackBar(
+          content: Text(AppLocalizations.of(context)!.signUpFailed),
           backgroundColor: Colors.red,
         ),
       );
@@ -71,7 +72,7 @@ class _RegisterScreenState extends ConsumerState<RegisterScreen> {
     return Scaffold(
       backgroundColor: Theme.of(context).colorScheme.background,
       appBar: AppBar(
-        title: const Text('회원가입'),
+        title: Text(AppLocalizations.of(context)!.register),
         leading: IconButton(
           icon: const Icon(Icons.arrow_back),
           onPressed: () => context.pop(),
@@ -90,13 +91,13 @@ class _RegisterScreenState extends ConsumerState<RegisterScreen> {
                 // 이름 입력
                 CustomTextField(
                   controller: _nameController,
-                  labelText: '이름',
+                  labelText: AppLocalizations.of(context)!.name,
                   validator: (value) {
                     if (value == null || value.isEmpty) {
-                      return '이름을 입력해주세요';
+                      return AppLocalizations.of(context)!.enterName;
                     }
                     if (value.length < 2) {
-                      return '이름은 2자리 이상이어야 합니다';
+                      return AppLocalizations.of(context)!.nameMinLength;
                     }
                     return null;
                   },
@@ -107,14 +108,14 @@ class _RegisterScreenState extends ConsumerState<RegisterScreen> {
                 // 이메일 입력
                 CustomTextField(
                   controller: _emailController,
-                  labelText: '이메일',
+                  labelText: AppLocalizations.of(context)!.email,
                   keyboardType: TextInputType.emailAddress,
                   validator: (value) {
                     if (value == null || value.isEmpty) {
-                      return '이메일을 입력해주세요';
+                      return AppLocalizations.of(context)!.enterEmail;
                     }
                     if (!value.contains('@')) {
-                      return '올바른 이메일 형식을 입력해주세요';
+                      return AppLocalizations.of(context)!.enterValidEmail;
                     }
                     return null;
                   },
@@ -125,7 +126,7 @@ class _RegisterScreenState extends ConsumerState<RegisterScreen> {
                 // 비밀번호 입력
                 CustomTextField(
                   controller: _passwordController,
-                  labelText: '비밀번호',
+                  labelText: AppLocalizations.of(context)!.password,
                   obscureText: _obscurePassword,
                   suffixIcon: IconButton(
                     icon: Icon(
@@ -139,10 +140,10 @@ class _RegisterScreenState extends ConsumerState<RegisterScreen> {
                   ),
                   validator: (value) {
                     if (value == null || value.isEmpty) {
-                      return '비밀번호를 입력해주세요';
+                      return AppLocalizations.of(context)!.enterPassword;
                     }
                     if (value.length < 6) {
-                      return '비밀번호는 6자리 이상이어야 합니다';
+                      return AppLocalizations.of(context)!.passwordMinLength;
                     }
                     return null;
                   },
@@ -153,7 +154,7 @@ class _RegisterScreenState extends ConsumerState<RegisterScreen> {
                 // 비밀번호 확인
                 CustomTextField(
                   controller: _confirmPasswordController,
-                  labelText: '비밀번호 확인',
+                  labelText: AppLocalizations.of(context)!.confirmPassword,
                   obscureText: _obscureConfirmPassword,
                   suffixIcon: IconButton(
                     icon: Icon(
@@ -167,10 +168,10 @@ class _RegisterScreenState extends ConsumerState<RegisterScreen> {
                   ),
                   validator: (value) {
                     if (value == null || value.isEmpty) {
-                      return '비밀번호 확인을 입력해주세요';
+                      return AppLocalizations.of(context)!.enterConfirmPassword;
                     }
                     if (value != _passwordController.text) {
-                      return '비밀번호가 일치하지 않습니다';
+                      return AppLocalizations.of(context)!.passwordMismatch;
                     }
                     return null;
                   },
@@ -186,7 +187,7 @@ class _RegisterScreenState extends ConsumerState<RegisterScreen> {
                       _agreeToTerms = value ?? false;
                     });
                   },
-                  title: const Text('서비스 이용약관에 동의합니다'),
+                  title: Text(AppLocalizations.of(context)!.agreeToTerms),
                   controlAffinity: ListTileControlAffinity.leading,
                   contentPadding: EdgeInsets.zero,
                 ),
@@ -195,7 +196,7 @@ class _RegisterScreenState extends ConsumerState<RegisterScreen> {
                 
                 // 회원가입 버튼
                 CustomButton(
-                  text: '회원가입',
+                  text: AppLocalizations.of(context)!.register,
                   onPressed: authState.isLoading ? null : _signUp,
                   isLoading: authState.isLoading,
                 ),
@@ -206,10 +207,10 @@ class _RegisterScreenState extends ConsumerState<RegisterScreen> {
                 Row(
                   mainAxisAlignment: MainAxisAlignment.center,
                   children: [
-                    const Text('이미 계정이 있으신가요? '),
+                    Text(AppLocalizations.of(context)!.alreadyHaveAccount + ' '),
                     TextButton(
                       onPressed: () => context.go('/login'),
-                      child: const Text('로그인'),
+                      child: Text(AppLocalizations.of(context)!.login),
                     ),
                   ],
                 ),
