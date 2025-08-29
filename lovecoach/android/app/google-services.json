@@ -1,0 +1,46 @@
+{
+  "project_info": {
+    "project_number": "263358179906",
+    "project_id": "lovecoach-60741",
+    "storage_bucket": "lovecoach-60741.firebasestorage.app"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:263358179906:android:548d0dd5fea4ace82f1bdb",
+        "android_client_info": {
+          "package_name": "com.example.lovecoach"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "263358179906-om9v1s6e5qpvhi2ghme4eg4btb1uvrvh.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyDU08gNHbfSTWRx6t1uGN8peOwjdQTrmXU"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": [
+            {
+              "client_id": "263358179906-om9v1s6e5qpvhi2ghme4eg4btb1uvrvh.apps.googleusercontent.com",
+              "client_type": 3
+            },
+            {
+              "client_id": "263358179906-91kv6f3v7nbfno20d8t460i2vkh3op3q.apps.googleusercontent.com",
+              "client_type": 2,
+              "ios_info": {
+                "bundle_id": "com.example.lovecoach"
+              }
+            }
+          ]
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}

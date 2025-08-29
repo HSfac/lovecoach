@@ -1,0 +1,34 @@
+{
+  "@@locale": "en",
+  
+  "languageSettings": "Language Settings",
+  "languageSettingsMode": "Language Settings Mode",
+  "useSystemLanguage": "Use System Language",
+  "useSystemLanguageDescription": "Follow the device's language settings",
+  "currentLanguage": "Current Language",
+  "languageSelection": "Language Selection",
+  "languageSettingsInfo": "Language Settings Information",
+  
+  "korean": "한국어",
+  "english": "English",
+  "japanese": "日本語",
+  "chinese": "中文",
+  
+  "englishSubtitle": "English (US)",
+  "japaneseSubtitle": "日本語 (Japanese)",
+  "chineseSubtitle": "中文简体 (Simplified Chinese)",
+  
+  "realTimeTranslation": "Real-time Translation",
+  "realTimeTranslationDescription": "Chat with AI counselor in real-time in your selected language",
+  "aiModelOptimization": "AI Model Optimization",
+  "aiModelOptimizationDescription": "Language-specific AI models provide more natural counseling experiences",
+  "instantApplication": "Instant Application",
+  "instantApplicationDescription": "Language changes are applied instantly across the app without restart",
+  "chatHistoryPreservation": "Previous chat history is preserved even after language changes",
+  
+  "home": "Home",
+  "chat": "Chat",
+  "community": "Community",
+  "profile": "Profile",
+  "settings": "Settings"
+}
