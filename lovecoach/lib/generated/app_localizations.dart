@@ -444,6 +444,18 @@ abstract class AppLocalizations {
   /// **'Google 로그인에 실패했습니다.'**
   String get googleSignInFailed;
 
+  /// No description provided for @testAccountSuccess.
+  ///
+  /// In ko, this message translates to:
+  /// **'테스트 계정으로 로그인되었습니다.'**
+  String get testAccountSuccess;
+
+  /// No description provided for @testAccountFailed.
+  ///
+  /// In ko, this message translates to:
+  /// **'테스트 계정 로그인에 실패했습니다.'**
+  String get testAccountFailed;
+
   /// No description provided for @alreadyHaveAccount.
   ///
   /// In ko, this message translates to:

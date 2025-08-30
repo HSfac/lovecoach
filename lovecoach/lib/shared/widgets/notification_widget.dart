@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import '../services/community_notification_service.dart';
 import '../providers/auth_provider.dart';
+import 'level_up_dialog.dart';
 
 // Notification model
 class NotificationItem {
@@ -306,6 +307,20 @@ class NotificationPanel extends ConsumerWidget {
       case 'reply':
         // Navigate to comment thread
         break;
+      case 'level_up':
+        // Show beautiful level up dialog
+        Navigator.pop(context);
+        if (notification.data != null) {
+          LevelUpDialog.show(
+            context,
+            oldLevel: notification.data!['oldLevel'] ?? 1,
+            newLevel: notification.data!['newLevel'] ?? 2,
+            oldRank: notification.data!['oldRank'] ?? '풋사랑',
+            newRank: notification.data!['newRank'] ?? '설레임',
+            newExp: notification.data!['newExp'] ?? 100,
+          );
+        }
+        break;
       case 'system':
         // Handle system notifications
         break;
@@ -427,6 +442,8 @@ class NotificationTile extends StatelessWidget {
         return Icons.comment;
       case 'reply':
         return Icons.reply;
+      case 'level_up':
+        return Icons.emoji_events;
       case 'system':
         return Icons.info;
       default:
@@ -442,6 +459,8 @@ class NotificationTile extends StatelessWidget {
         return Colors.blue;
       case 'reply':
         return Colors.green;
+      case 'level_up':
+        return Colors.amber;
       case 'system':
         return Colors.orange;
       default:

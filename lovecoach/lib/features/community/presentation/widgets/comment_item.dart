@@ -46,7 +46,7 @@ class CommentItem extends StatelessWidget {
                   height: 20,
                   decoration: BoxDecoration(
                     color: comment.author != null 
-                        ? RankSystem.getRankInfo(comment.author!.communityRank).color
+                        ? UserLevelHelper.getRankColor(comment.author!)
                         : Colors.blue[300],
                     borderRadius: BorderRadius.circular(2),
                   ),

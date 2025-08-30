@@ -84,9 +84,9 @@ class _ForgotPasswordScreenState extends ConsumerState<ForgotPasswordScreen> {
           const SizedBox(height: 32),
           
           // 제목
-          const Text(
+          Text(
             AppLocalizations.of(context)!.forgotPassword,
-            style: TextStyle(
+            style: const TextStyle(
               fontSize: 24,
               fontWeight: FontWeight.bold,
               color: AppTheme.textPrimary,
@@ -96,10 +96,10 @@ class _ForgotPasswordScreenState extends ConsumerState<ForgotPasswordScreen> {
           const SizedBox(height: 16),
           
           // 설명
-          const Text(
+          Text(
             AppLocalizations.of(context)!.forgotPasswordDescription.replaceAll('\\n', '\n'),
             textAlign: TextAlign.center,
-            style: TextStyle(
+            style: const TextStyle(
               fontSize: 16,
               color: AppTheme.textSecondary,
               height: 1.5,
@@ -138,9 +138,9 @@ class _ForgotPasswordScreenState extends ConsumerState<ForgotPasswordScreen> {
           // 뒤로가기
           TextButton(
             onPressed: () => context.pop(),
-            child: const Text(
+            child: Text(
               AppLocalizations.of(context)!.backToLogin,
-              style: TextStyle(
+              style: const TextStyle(
                 color: AppTheme.primaryColor,
                 fontWeight: FontWeight.w600,
               ),

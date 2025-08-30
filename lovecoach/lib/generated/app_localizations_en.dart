@@ -193,6 +193,12 @@ class AppLocalizationsEn extends AppLocalizations {
   String get googleSignInFailed => 'Google sign-in failed.';
 
   @override
+  String get testAccountSuccess => '테스트 계정으로 로그인되었습니다.';
+
+  @override
+  String get testAccountFailed => '테스트 계정 로그인에 실패했습니다.';
+
+  @override
   String get alreadyHaveAccount => 'Already have an account?';
 
   @override

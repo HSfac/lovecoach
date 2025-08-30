@@ -283,7 +283,7 @@ class CommunityNotificationService {
     }
   }
 
-  // Update user activity and recalculate rank
+  // Update user activity and add experience points
   Future<void> _updateUserActivity(
     String userId, {
     int postCount = 0,
@@ -302,28 +302,27 @@ class CommunityNotificationService {
       final currentCommentCount = userData['communityCommentCount'] as int? ?? 0;
       final currentLikeReceived = userData['communityLikeReceived'] as int? ?? 0;
       final currentLikeGiven = userData['communityLikeGiven'] as int? ?? 0;
+      final currentExp = userData['experiencePoints'] as int? ?? 0;
 
       final newPostCount = currentPostCount + postCount;
       final newCommentCount = currentCommentCount + commentCount;
       final newLikeReceived = currentLikeReceived + likeReceived;
       final newLikeGiven = currentLikeGiven + likeGiven;
 
-      // Calculate new rank
-      final points = (newPostCount * 10) + (newCommentCount * 5) + 
-                    (newLikeReceived * 2) + (newLikeGiven * 1);
-      
-      String newRank = 'newbie';
-      if (points >= 1200) newRank = 'master';
-      else if (points >= 800) newRank = 'diamond';
-      else if (points >= 500) newRank = 'platinum';
-      else if (points >= 300) newRank = 'gold';
-      else if (points >= 150) newRank = 'silver';
-      else if (points >= 50) newRank = 'bronze';
+      // Calculate experience points to add
+      int expToAdd = (postCount * 20) +      // 포스트 작성: +20 EXP
+                    (commentCount * 10) +    // 댓글 작성: +10 EXP
+                    (likeReceived * 5) +     // 좋아요 받기: +5 EXP
+                    (likeGiven * 2);         // 좋아요 주기: +2 EXP
 
-      // Check for rank up notification
-      final oldRank = userData['communityRank'] as String? ?? 'newbie';
-      if (newRank != oldRank) {
-        await _createRankUpNotification(userId, oldRank, newRank);
+      final newExp = currentExp + expToAdd;
+      
+      // Check for level up
+      final oldLevel = _calculateLevel(currentExp);
+      final newLevel = _calculateLevel(newExp);
+      
+      if (newLevel > oldLevel && expToAdd > 0) {
+        await _createLevelUpNotification(userId, oldLevel, newLevel, newExp);
       }
 
       transaction.update(userRef, {
@@ -331,32 +330,56 @@ class CommunityNotificationService {
         'communityCommentCount': newCommentCount,
         'communityLikeReceived': newLikeReceived,
         'communityLikeGiven': newLikeGiven,
-        'communityRank': newRank,
+        'experiencePoints': newExp,
         'updatedAt': FieldValue.serverTimestamp(),
       });
     });
   }
 
-  // Create rank up notification
-  Future<void> _createRankUpNotification(String userId, String oldRank, String newRank) async {
-    final rankNames = {
-      'newbie': '새싹',
-      'bronze': '브론즈',
-      'silver': '실버',
-      'gold': '골드',
-      'platinum': '플래티넘',
-      'diamond': '다이아몬드',
-      'master': '마스터',
-    };
+  // Calculate user level from experience points
+  int _calculateLevel(int experiencePoints) {
+    if (experiencePoints < 100) return 1;
+    if (experiencePoints < 300) return 2;
+    if (experiencePoints < 600) return 3;
+    if (experiencePoints < 1000) return 4;
+    if (experiencePoints < 1500) return 5;
+    if (experiencePoints < 2100) return 6;
+    if (experiencePoints < 2800) return 7;
+    if (experiencePoints < 3600) return 8;
+    if (experiencePoints < 4500) return 9;
+    if (experiencePoints < 5500) return 10;
+    return (experiencePoints ~/ 1000).clamp(10, 50);
+  }
 
+  // Get rank name from level
+  String _getRankFromLevel(int level) {
+    if (level == 1) return '풋사랑';
+    if (level <= 3) return '설레임';
+    if (level <= 5) return '첫키스';
+    if (level <= 7) return '달콤한사랑';
+    if (level <= 10) return '열정적사랑';
+    if (level <= 15) return '진실한사랑';
+    if (level <= 25) return '운명적사랑';
+    if (level <= 35) return '영원한사랑';
+    return '사랑의전설';
+  }
+
+  // Create level up notification
+  Future<void> _createLevelUpNotification(String userId, int oldLevel, int newLevel, int newExp) async {
+    final oldRank = _getRankFromLevel(oldLevel);
+    final newRank = _getRankFromLevel(newLevel);
+    
     await _firebaseService.createNotification(
       userId: userId,
-      title: '🎉 등급 상승!',
-      message: '축하합니다! ${rankNames[oldRank]}에서 ${rankNames[newRank]}로 등급이 올랐어요! 커뮤니티 활동을 더욱 활발히 해보세요.',
-      type: 'rank_up',
+      title: '🎉 레벨 업!',
+      message: '축하합니다! Lv.$newLevel $newRank 등급이 되었어요! 현재 경험치: $newExp EXP',
+      type: 'level_up',
       data: {
+        'oldLevel': oldLevel,
+        'newLevel': newLevel,
         'oldRank': oldRank,
         'newRank': newRank,
+        'newExp': newExp,
       },
     );
   }

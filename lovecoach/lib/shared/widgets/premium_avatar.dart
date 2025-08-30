@@ -1,125 +1,26 @@
 import 'package:flutter/material.dart';
 import '../models/user_model.dart';
 
-// Community Rank System
-enum CommunityRank {
-  newbie,
-  bronze,
-  silver,
-  gold,
-  platinum,
-  diamond,
-  master,
-}
-
-class CommunityRankInfo {
-  final String title;
-  final String koreanTitle;
-  final Color color;
-  final IconData icon;
-  final int minPoints;
-
-  const CommunityRankInfo({
-    required this.title,
-    required this.koreanTitle,
-    required this.color,
-    required this.icon,
-    required this.minPoints,
-  });
-}
-
-class RankSystem {
-  static const Map<CommunityRank, CommunityRankInfo> rankInfo = {
-    CommunityRank.newbie: CommunityRankInfo(
-      title: 'newbie',
-      koreanTitle: '새싹',
-      color: Colors.grey,
-      icon: Icons.eco_outlined,
-      minPoints: 0,
-    ),
-    CommunityRank.bronze: CommunityRankInfo(
-      title: 'bronze',
-      koreanTitle: '브론즈',
-      color: Color(0xFFCD7F32),
-      icon: Icons.shield_outlined,
-      minPoints: 50,
-    ),
-    CommunityRank.silver: CommunityRankInfo(
-      title: 'silver',
-      koreanTitle: '실버',
-      color: Color(0xFFC0C0C0),
-      icon: Icons.star_border,
-      minPoints: 150,
-    ),
-    CommunityRank.gold: CommunityRankInfo(
-      title: 'gold',
-      koreanTitle: '골드',
-      color: Color(0xFFFFD700),
-      icon: Icons.star,
-      minPoints: 300,
-    ),
-    CommunityRank.platinum: CommunityRankInfo(
-      title: 'platinum',
-      koreanTitle: '플래티넘',
-      color: Color(0xFFE5E4E2),
-      icon: Icons.military_tech,
-      minPoints: 500,
-    ),
-    CommunityRank.diamond: CommunityRankInfo(
-      title: 'diamond',
-      koreanTitle: '다이아몬드',
-      color: Color(0xFFB9F2FF),
-      icon: Icons.diamond,
-      minPoints: 800,
-    ),
-    CommunityRank.master: CommunityRankInfo(
-      title: 'master',
-      koreanTitle: '마스터',
-      color: Color(0xFF9400D3),
-      icon: Icons.workspace_premium,
-      minPoints: 1200,
-    ),
-  };
-
-  static CommunityRank calculateRank(UserModel user) {
-    final points = _calculatePoints(user);
-    
-    for (final rank in CommunityRank.values.reversed) {
-      if (points >= rankInfo[rank]!.minPoints) {
-        return rank;
-      }
-    }
-    return CommunityRank.newbie;
+// Unified Level System Helper
+class UserLevelHelper {
+  // Get rank color based on user level
+  static Color getRankColor(UserModel user) {
+    final colors = user.rankColor;
+    return Color.fromRGBO(colors['r']!, colors['g']!, colors['b']!, 1.0);
   }
-
-  static int _calculatePoints(UserModel user) {
-    return (user.communityPostCount * 10) +
-           (user.communityCommentCount * 5) +
-           (user.communityLikeReceived * 2) +
-           (user.communityLikeGiven * 1);
-  }
-
-  static CommunityRankInfo getRankInfo(String rankString) {
-    final rank = CommunityRank.values.firstWhere(
-      (r) => r.toString().split('.').last == rankString,
-      orElse: () => CommunityRank.newbie,
-    );
-    return rankInfo[rank]!;
-  }
-
-  static int getUserPoints(UserModel user) => _calculatePoints(user);
   
-  static int getPointsToNextRank(UserModel user) {
-    final currentRank = calculateRank(user);
-    final currentPoints = _calculatePoints(user);
-    
-    final currentIndex = CommunityRank.values.indexOf(currentRank);
-    if (currentIndex >= CommunityRank.values.length - 1) {
-      return 0; // Already at max rank
-    }
-    
-    final nextRank = CommunityRank.values[currentIndex + 1];
-    return rankInfo[nextRank]!.minPoints - currentPoints;
+  // Get rank icon based on user level  
+  static IconData getRankIcon(UserModel user) {
+    final level = user.userLevel;
+    if (level == 1) return Icons.eco_outlined; // 새싹
+    if (level <= 3) return Icons.favorite_outline; // 설레임
+    if (level <= 5) return Icons.favorite; // 첫키스
+    if (level <= 7) return Icons.cake; // 달콤한사랑
+    if (level <= 10) return Icons.local_fire_department; // 열정적사랑
+    if (level <= 15) return Icons.favorite_rounded; // 진실한사랑
+    if (level <= 25) return Icons.auto_awesome; // 운명적사랑
+    if (level <= 35) return Icons.workspace_premium; // 영원한사랑
+    return Icons.emoji_events; // 사랑의전설
   }
 }
 
@@ -143,9 +44,14 @@ class PremiumAvatar extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final isSubscribed = user?.isSubscribed ?? false;
-    final rankInfo = user != null 
-        ? RankSystem.getRankInfo(user!.communityRank)
-        : RankSystem.rankInfo[CommunityRank.newbie]!;
+    
+    // Use unified level system
+    final rankColor = user != null 
+        ? UserLevelHelper.getRankColor(user!)
+        : Colors.grey;
+    final rankIcon = user != null
+        ? UserLevelHelper.getRankIcon(user!)
+        : Icons.eco_outlined;
 
     return Stack(
       children: [
@@ -176,7 +82,7 @@ class PremiumAvatar extends StatelessWidget {
                 backgroundColor: Colors.white,
                 child: CircleAvatar(
                   radius: radius - 2,
-                  backgroundColor: rankInfo.color.withOpacity(0.15),
+                  backgroundColor: rankColor.withOpacity(0.15),
                   backgroundImage: photoUrl != null ? NetworkImage(photoUrl!) : null,
                   child: photoUrl == null
                       ? Text(
@@ -184,7 +90,7 @@ class PremiumAvatar extends StatelessWidget {
                           style: TextStyle(
                             fontSize: radius * 0.7,
                             fontWeight: FontWeight.bold,
-                            color: rankInfo.color,
+                            color: rankColor,
                           ),
                         )
                       : null,
@@ -200,13 +106,13 @@ class PremiumAvatar extends StatelessWidget {
             decoration: BoxDecoration(
               shape: BoxShape.circle,
               border: Border.all(
-                color: rankInfo.color,
+                color: rankColor,
                 width: 2,
               ),
             ),
             child: CircleAvatar(
               radius: radius,
-              backgroundColor: rankInfo.color.withOpacity(0.15),
+              backgroundColor: rankColor.withOpacity(0.15),
               backgroundImage: photoUrl != null ? NetworkImage(photoUrl!) : null,
               child: photoUrl == null
                   ? Text(
@@ -214,7 +120,7 @@ class PremiumAvatar extends StatelessWidget {
                       style: TextStyle(
                         fontSize: radius * 0.7,
                         fontWeight: FontWeight.bold,
-                        color: rankInfo.color,
+                        color: rankColor,
                       ),
                     )
                   : null,
@@ -229,7 +135,7 @@ class PremiumAvatar extends StatelessWidget {
             child: Container(
               padding: const EdgeInsets.all(2),
               decoration: BoxDecoration(
-                color: rankInfo.color,
+                color: rankColor,
                 shape: BoxShape.circle,
                 border: Border.all(color: Colors.white, width: 1),
                 boxShadow: [
@@ -241,7 +147,7 @@ class PremiumAvatar extends StatelessWidget {
                 ],
               ),
               child: Icon(
-                rankInfo.icon,
+                rankIcon,
                 size: radius * 0.4,
                 color: Colors.white,
               ),
@@ -279,7 +185,7 @@ class PremiumAvatar extends StatelessWidget {
   }
 }
 
-// Rank Display Widget
+// Rank Display Widget (Using unified level system)
 class RankDisplay extends StatelessWidget {
   final UserModel user;
   final bool showProgress;
@@ -292,41 +198,55 @@ class RankDisplay extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final rankInfo = RankSystem.getRankInfo(user.communityRank);
-    final currentPoints = RankSystem.getUserPoints(user);
-    final pointsToNext = RankSystem.getPointsToNextRank(user);
+    // Use unified level system
+    final rankColor = UserLevelHelper.getRankColor(user);
+    final rankIcon = UserLevelHelper.getRankIcon(user);
+    final userLevel = user.userLevel;
+    final userRank = user.userRank;
+    final currentExp = user.experiencePoints;
+    final expForNext = user.expForNextLevel;
+    final expNeeded = expForNext - currentExp;
 
     return Container(
       padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 4),
       decoration: BoxDecoration(
-        color: rankInfo.color.withOpacity(0.15),
+        color: rankColor.withOpacity(0.15),
         borderRadius: BorderRadius.circular(12),
-        border: Border.all(color: rankInfo.color, width: 1),
+        border: Border.all(color: rankColor, width: 1),
       ),
       child: Row(
         mainAxisSize: MainAxisSize.min,
         children: [
           Icon(
-            rankInfo.icon,
+            rankIcon,
             size: 14,
-            color: rankInfo.color,
+            color: rankColor,
           ),
           const SizedBox(width: 4),
           Text(
-            rankInfo.koreanTitle,
+            'Lv.$userLevel',
             style: TextStyle(
               fontSize: 11,
-              fontWeight: FontWeight.w600,
-              color: rankInfo.color,
+              fontWeight: FontWeight.bold,
+              color: rankColor,
             ),
           ),
-          if (showProgress && pointsToNext > 0) ...[
+          const SizedBox(width: 4),
+          Text(
+            userRank,
+            style: TextStyle(
+              fontSize: 10,
+              fontWeight: FontWeight.w600,
+              color: rankColor,
+            ),
+          ),
+          if (showProgress && expNeeded > 0) ...[
             const SizedBox(width: 4),
             Text(
-              '(+$pointsToNext)',
+              '(+$expNeeded)',
               style: TextStyle(
                 fontSize: 10,
-                color: rankInfo.color.withOpacity(0.7),
+                color: rankColor.withOpacity(0.7),
               ),
             ),
           ],

@@ -27,6 +27,7 @@ import '../../features/support/presentation/screens/inquiry_history_screen.dart'
 import '../../features/community/presentation/screens/community_screen.dart';
 import '../../features/community/presentation/screens/write_post_screen.dart';
 import '../../features/community/presentation/screens/post_detail_screen.dart';
+import '../../features/attendance/presentation/screens/attendance_screen.dart';
 import '../../shared/providers/auth_provider.dart';
 
 class AppRouter {
@@ -124,6 +125,10 @@ class AppRouter {
             final postId = state.pathParameters['postId']!;
             return PostDetailScreen(postId: postId);
           },
+        ),
+        GoRoute(
+          path: '/attendance',
+          builder: (context, state) => const AttendanceScreen(),
         ),
         GoRoute(
           path: '/forgot-password',

@@ -182,6 +182,12 @@ class AppLocalizationsZh extends AppLocalizations {
   String get googleSignInFailed => 'Google登录失败。';
 
   @override
+  String get testAccountSuccess => '테스트 계정으로 로그인되었습니다.';
+
+  @override
+  String get testAccountFailed => '테스트 계정 로그인에 실패했습니다.';
+
+  @override
   String get alreadyHaveAccount => '已有账户吗？';
 
   @override

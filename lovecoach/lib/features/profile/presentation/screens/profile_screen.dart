@@ -80,7 +80,7 @@ class ProfileScreen extends ConsumerWidget {
                     const SizedBox(height: 24),
                     
                     // 사용자 레벨 카드
-                    _buildUserLevelCard(userData),
+                    _buildUserLevelCard(context, userData),
                     
                     const SizedBox(height: 24),
                     
@@ -568,7 +568,7 @@ class ProfileScreen extends ConsumerWidget {
     return '${dateTime.year}년 ${dateTime.month}월 ${dateTime.day}일';
   }
 
-  Widget _buildUserLevelCard(userData) {
+  Widget _buildUserLevelCard(BuildContext context, userData) {
     final rankColorMap = userData.rankColor;
     final rankColor = Color.fromRGBO(rankColorMap['r'], rankColorMap['g'], rankColorMap['b'], 1.0);
     
@@ -705,39 +705,83 @@ class ProfileScreen extends ConsumerWidget {
           
           const SizedBox(height: 12),
           
-          // 등급표 보기 버튼
-          GestureDetector(
-            onTap: () => context.push('/rank-guide'),
-            child: Container(
-              padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
-              decoration: BoxDecoration(
-                color: AppTheme.primaryColor.withOpacity(0.1),
-                borderRadius: BorderRadius.circular(20),
-                border: Border.all(
-                  color: AppTheme.primaryColor.withOpacity(0.3),
-                  width: 1,
-                ),
-              ),
-              child: Row(
-                mainAxisSize: MainAxisSize.min,
-                children: [
-                  Icon(
-                    Icons.list_alt,
-                    size: 16,
-                    color: AppTheme.primaryColor,
-                  ),
-                  const SizedBox(width: 6),
-                  Text(
-                    '등급표 보기',
-                    style: TextStyle(
-                      fontSize: 12,
-                      fontWeight: FontWeight.bold,
-                      color: AppTheme.primaryColor,
+          // 버튼들
+          Row(
+            mainAxisAlignment: MainAxisAlignment.center,
+            children: [
+              GestureDetector(
+                onTap: () => context.push('/rank-guide'),
+                child: Container(
+                  padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
+                  decoration: BoxDecoration(
+                    color: AppTheme.primaryColor.withOpacity(0.1),
+                    borderRadius: BorderRadius.circular(20),
+                    border: Border.all(
+                      color: AppTheme.primaryColor.withOpacity(0.3),
+                      width: 1,
                     ),
                   ),
-                ],
+                  child: Row(
+                    mainAxisSize: MainAxisSize.min,
+                    children: [
+                      Icon(
+                        Icons.list_alt,
+                        size: 16,
+                        color: AppTheme.primaryColor,
+                      ),
+                      const SizedBox(width: 6),
+                      Text(
+                        '등급표 보기',
+                        style: TextStyle(
+                          fontSize: 12,
+                          fontWeight: FontWeight.bold,
+                          color: AppTheme.primaryColor,
+                        ),
+                      ),
+                    ],
+                  ),
+                ),
               ),
-            ),
+              const SizedBox(width: 12),
+              GestureDetector(
+                onTap: () => context.push('/attendance'),
+                child: Container(
+                  padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
+                  decoration: BoxDecoration(
+                    gradient: LinearGradient(
+                      colors: [Colors.orange[400]!, Colors.deepOrange[500]!],
+                    ),
+                    borderRadius: BorderRadius.circular(20),
+                    boxShadow: [
+                      BoxShadow(
+                        color: Colors.orange.withOpacity(0.3),
+                        blurRadius: 8,
+                        offset: const Offset(0, 4),
+                      ),
+                    ],
+                  ),
+                  child: Row(
+                    mainAxisSize: MainAxisSize.min,
+                    children: [
+                      const Icon(
+                        Icons.calendar_today,
+                        size: 16,
+                        color: Colors.white,
+                      ),
+                      const SizedBox(width: 6),
+                      const Text(
+                        '출석체크',
+                        style: TextStyle(
+                          fontSize: 12,
+                          fontWeight: FontWeight.bold,
+                          color: Colors.white,
+                        ),
+                      ),
+                    ],
+                  ),
+                ),
+              ),
+            ],
           ),
           
           const SizedBox(height: 16),
